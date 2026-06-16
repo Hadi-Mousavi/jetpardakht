@@ -39,23 +39,23 @@ Screenshots will be added as the UI stabilizes.
 
 ## Tech Stack
 
-- Python
+- Python 3.10+
 - Django 4.2
-- SQLite for local development
+- PostgreSQL 14+
 - Bootstrap RTL
 - Bootstrap Icons
 - Vazirmatn Persian font
 
 ## Installation
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd JetPay24
 ```
 
-Create and activate a virtual environment:
+### 2. Create and activate a virtual environment
 
 ```bash
 python -m venv venv
@@ -73,40 +73,80 @@ On macOS/Linux:
 source venv/bin/activate
 ```
 
-Install dependencies:
+### 3. Install dependencies
 
 ```bash
-pip install django
+pip install -r requirements.txt
 ```
 
-> Note: A dedicated dependency file such as `requirements.txt` is planned for a future development phase.
+### 4. Configure environment variables
 
-## Running Locally
+Copy the example environment file and fill in your values:
 
-Apply database migrations:
+```bash
+cp .env.example .env
+```
+
+Open `.env` and set at minimum your PostgreSQL password:
+
+```env
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_NAME=jetpay24
+DB_USER=postgres
+DB_PASSWORD=your-postgres-password
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+To generate a secure `SECRET_KEY`, run:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+### 5. Set up PostgreSQL
+
+Ensure PostgreSQL is running, then create the database:
+
+```bash
+psql -U postgres -c "CREATE DATABASE jetpay24;"
+```
+
+Or using the `psql` interactive prompt:
+
+```sql
+CREATE DATABASE jetpay24;
+```
+
+### 6. Apply migrations
 
 ```bash
 python manage.py migrate
 ```
 
-Create an admin user:
+### 7. Create an admin user
 
 ```bash
 python manage.py createsuperuser
 ```
 
-Start the development server:
+### 8. Start the development server
 
 ```bash
 python manage.py runserver
 ```
 
-Open the project locally:
+## Local URLs
 
-- Website: `http://127.0.0.1:8000/`
-- Order form: `http://127.0.0.1:8000/order/`
-- Order tracking: `http://127.0.0.1:8000/tracking/`
-- Admin panel: `http://127.0.0.1:8000/admin/`
+| Page | URL |
+|---|---|
+| Website | `http://127.0.0.1:8000/` |
+| Order form | `http://127.0.0.1:8000/order/` |
+| Order tracking | `http://127.0.0.1:8000/tracking/` |
+| Admin panel | `http://127.0.0.1:8000/admin/` |
 
 ## Project Structure
 
@@ -118,23 +158,39 @@ JetPay24/
 ├── templates/
 │   ├── orders/             # Order form, success, and tracking templates
 │   └── pages/              # Landing page template
+├── docs/                   # Architecture and planning documents
+├── .env                    # Local environment variables (not committed)
+├── .env.example            # Environment variable template (committed)
+├── requirements.txt        # Python dependencies
 ├── manage.py               # Django management entry point
 └── README.md
 ```
 
+## Environment Variables Reference
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `SECRET_KEY` | Yes | — | Django secret key |
+| `DEBUG` | No | `False` | Enable debug mode |
+| `ALLOWED_HOSTS` | No | `localhost,127.0.0.1` | Comma-separated allowed hosts |
+| `DB_NAME` | No | `jetpay24` | PostgreSQL database name |
+| `DB_USER` | No | `postgres` | PostgreSQL user |
+| `DB_PASSWORD` | No | *(empty)* | PostgreSQL password |
+| `DB_HOST` | No | `localhost` | PostgreSQL host |
+| `DB_PORT` | No | `5432` | PostgreSQL port |
+| `MEDIA_URL` | No | `/media/` | URL prefix for uploaded files |
+
 ## Future Roadmap
 
-- Production-ready settings and environment-based configuration
-- Dependency file and deployment documentation
-- Improved order tracking with status history
-- Dedicated service detail pages
-- Contact page with backend processing
-- FAQ page
-- Blog system for SEO and educational content
-- SEO metadata, sitemap, and structured data
-- Admin workflow improvements and reporting
-- Future AI assistant integration
-- Future Android app/API integration
+- Phase 1: User accounts and authentication
+- Phase 2: Customer panel (dashboard, profile, settings)
+- Phase 3: KYC identity verification
+- Phase 4: Wallet and payment ledger
+- Phase 5: Support tickets and live chat
+- Phase 6: Blog, FAQ, and content management
+- Phase 7: Exchange rates, USDT, and crypto price pages
+- Phase 8: Bilingual support (Persian and English)
+- Phase 9: Android and iOS mobile apps
 
 ## Development Status
 

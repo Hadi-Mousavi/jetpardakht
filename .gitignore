@@ -1,5 +1,24 @@
 venv/
 __pycache__/
 *.pyc
+*.pyo
+
+# Environment variables — never commit
+.env
+
+# Database
 db.sqlite3
+
+# User-uploaded files
 media/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
