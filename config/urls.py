@@ -19,10 +19,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from orders.views import order_tracking
+
+admin.site.site_header = 'جت‌پی‌۲۴ — پنل مدیریت'
+admin.site.site_title = 'JetPay24 Admin'
+admin.site.index_title = 'مدیریت سایت'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('pages.urls')),
     path('order/', include('orders.urls')),
+    path('tracking/', order_tracking, name='order_tracking'),
 ]
 
 if settings.DEBUG:

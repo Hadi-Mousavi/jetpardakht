@@ -7,13 +7,16 @@ from .models import Order
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'phone', 'email', 'service_type',
+        'tracking_code', 'name', 'phone', 'email', 'service_type',
         'amount', 'status', 'created_at', 'document_link',
     ]
     list_filter = ['status', 'service_type', 'created_at']
-    search_fields = ['name', 'phone', 'email']
-    readonly_fields = ['created_at', 'document_preview']
+    search_fields = ['tracking_code', 'name', 'phone', 'email']
+    readonly_fields = ['tracking_code', 'created_at', 'document_preview']
     fieldsets = (
+        ('کد پیگیری', {
+            'fields': ('tracking_code',),
+        }),
         ('اطلاعات مشتری', {
             'fields': ('name', 'phone', 'email'),
         }),

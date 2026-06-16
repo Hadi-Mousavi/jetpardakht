@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پی بریج — پرداخت‌های بین‌المللی آسان و مطمئن</title>
+    <title>جت‌پی‌۲۴ — پرداخت‌های بین‌المللی آسان و مطمئن</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,9 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --pb-primary: #0d6efd;
-            --pb-dark: #0a1628;
-            --pb-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            --jp-primary: #0d6efd;
+            --jp-dark: #0a1628;
+            --jp-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
         }
 
         body {
@@ -31,7 +31,7 @@
         }
 
         .hero {
-            background: var(--pb-gradient);
+            background: var(--jp-gradient);
             color: #fff;
             padding: 6rem 0 5rem;
             position: relative;
@@ -82,7 +82,7 @@
             height: 3.5rem;
             border-radius: 0.75rem;
             background: rgba(13, 110, 253, 0.1);
-            color: var(--pb-primary);
+            color: var(--jp-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -105,7 +105,7 @@
             width: 2.75rem;
             height: 2.75rem;
             border-radius: 50%;
-            background: var(--pb-gradient);
+            background: var(--jp-gradient);
             color: #fff;
             display: flex;
             align-items: center;
@@ -114,7 +114,7 @@
         }
 
         .contact-section {
-            background: var(--pb-dark);
+            background: var(--jp-dark);
             color: #fff;
             border-radius: 1.5rem;
             padding: 4rem 2rem;
@@ -129,11 +129,11 @@
 
         .contact-info-item i {
             font-size: 1.25rem;
-            color: var(--pb-primary);
+            color: var(--jp-primary);
         }
 
         .footer {
-            background: var(--pb-dark);
+            background: var(--jp-dark);
             color: rgba(255, 255, 255, 0.6);
             padding: 2rem 0;
             font-size: 0.875rem;
@@ -146,7 +146,7 @@
     <nav class="navbar navbar-expand-lg navbar-light sticky-top border-bottom">
         <div class="container">
             <a class="navbar-brand text-primary" href="#">
-                <i class="bi bi-globe2 ms-1"></i>پی بریج
+                <i class="bi bi-globe2 ms-1"></i>جت‌پی‌۲۴
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -155,6 +155,7 @@
                 <ul class="navbar-nav ms-auto gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="#services">خدمات</a></li>
                     <li class="nav-item"><a class="nav-link" href="#why">چرا ما</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'order_tracking' %}">پیگیری سفارش</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-primary text-white px-3 me-lg-2" href="#contact">تماس با ما</a></li>
                 </ul>
             </div>
@@ -171,7 +172,7 @@
                     </span>
                     <h1 class="display-4 fw-bold mb-3">پرداخت‌های بین‌المللی،<br>بدون پیچیدگی</h1>
                     <p class="lead mb-4 opacity-75">
-                        پی بریج راهکاری امن و حرفه‌ای برای دانشجویان و خانواده‌هاست تا پرداخت‌های
+                        جت‌پی‌۲۴ راهکاری امن و حرفه‌ای برای دانشجویان و خانواده‌هاست تا پرداخت‌های
                         شهریه دانشگاه، ثبت‌نام آزمون‌ها و سایر هزینه‌های بین‌المللی را
                         به‌صورت سریع، شفاف و مطمئن انجام دهند.
                     </p>
@@ -252,9 +253,9 @@
         <div class="container py-4">
             <div class="row align-items-center g-5">
                 <div class="col-lg-5">
-                    <h2 class="section-title display-6 mb-3">چرا پی بریج؟</h2>
+                    <h2 class="section-title display-6 mb-3">چرا جت‌پی‌۲۴؟</h2>
                     <p class="text-muted">
-                        پی بریج برای دانشجویان و خانواده‌هایی طراحی شده که به دنبال راهی ساده،
+                        جت‌پی‌۲۴ برای دانشجویان و خانواده‌هایی طراحی شده که به دنبال راهی ساده،
                         شفاف و امن برای انتقال وجه بین‌المللی هستند — بدون استرس و بدون ابهام.
                     </p>
                 </div>
@@ -310,7 +311,7 @@
                     <div class="col-lg-6 text-center text-lg-start">
                         <h2 class="section-title display-6 mb-3">تماس با ما</h2>
                         <p class="mb-4 opacity-75">
-                            سوالی درباره پرداخت بین‌المللی دارید؟ تیم پی بریج آماده پاسخگویی
+                            سوالی درباره پرداخت بین‌المللی دارید؟ تیم جت‌پی‌۲۴ آماده پاسخگویی
                             و راهنمایی شما در هر مرحله است. همین حالا با ما در ارتباط باشید.
                         </p>
                         <div class="d-flex flex-column gap-3 align-items-center align-items-lg-start">
@@ -320,7 +321,7 @@
                             </div>
                             <div class="contact-info-item">
                                 <i class="bi bi-envelope-fill"></i>
-                                <span>info@paybridge.ir</span>
+                                <span>info@jetpay24.ir</span>
                             </div>
                             <div class="contact-info-item">
                                 <i class="bi bi-clock-fill"></i>
@@ -359,7 +360,7 @@
     <!-- Footer -->
     <footer class="footer text-center">
         <div class="container">
-            <p class="mb-0">© ۱۴۰۵ پی بریج. تمامی حقوق محفوظ است.</p>
+            <p class="mb-0">© ۱۴۰۵ جت‌پی‌۲۴. تمامی حقوق محفوظ است.</p>
         </div>
     </footer>
 

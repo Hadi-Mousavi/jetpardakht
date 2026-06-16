@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سفارش ثبت شد — پی بریج</title>
+    <title>سفارش ثبت شد — جت‌پی‌۲۴</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --pb-primary: #0d6efd;
-            --pb-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            --jp-primary: #0d6efd;
+            --jp-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
         }
 
         body {
@@ -49,6 +49,35 @@
         .navbar-brand {
             font-weight: 800;
         }
+
+        .tracking-box {
+            background: #f0f4ff;
+            border: 2px solid #c7d7ff;
+            border-radius: 0.875rem;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .tracking-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0.4rem;
+        }
+
+        .tracking-code {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--jp-primary);
+            direction: ltr;
+            display: block;
+        }
+
+        .tracking-hint {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -56,8 +85,16 @@
     <nav class="navbar navbar-light bg-white border-bottom">
         <div class="container">
             <a class="navbar-brand text-primary" href="/">
-                <i class="bi bi-globe2 ms-1"></i>پی بریج
+                <i class="bi bi-globe2 ms-1"></i>جت‌پی‌۲۴
             </a>
+            <div class="d-flex gap-2">
+                <a href="{% url 'order_tracking' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-search ms-1"></i>پیگیری سفارش
+                </a>
+                <a href="/" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-house ms-1"></i>صفحه اصلی
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -67,16 +104,26 @@
                 <i class="bi bi-check-lg"></i>
             </div>
             <h1 class="fw-bold mb-3">سفارش شما با موفقیت ثبت شد</h1>
-            <p class="text-muted mb-4">
-                از اعتماد شما سپاسگزاریم. کارشناسان پی بریج در اسرع وقت
+            <p class="text-muted mb-0">
+                از اعتماد شما سپاسگزاریم. کارشناسان جت‌پی‌۲۴ در اسرع وقت
                 جهت بررسی درخواست و هماهنگی مراحل پرداخت با شما تماس خواهند گرفت.
             </p>
-            <div class="d-flex flex-wrap gap-3 justify-content-center">
-                <a href="/" class="btn btn-primary btn-lg px-4">
-                    <i class="bi bi-house-fill ms-1"></i>بازگشت به صفحه اصلی
+
+            <div class="tracking-box">
+                <p class="tracking-label mb-1">کد پیگیری سفارش شما</p>
+                <span class="tracking-code">{{ tracking_code }}</span>
+                <p class="tracking-hint mb-0">
+                    <i class="bi bi-info-circle ms-1"></i>
+                    این کد را یادداشت کنید. با آن می‌توانید وضعیت سفارش را پیگیری کنید.
+                </p>
+            </div>
+
+            <div class="d-flex flex-wrap gap-3 justify-content-center mt-3">
+                <a href="{% url 'order_tracking' %}?code={{ tracking_code }}" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-search ms-1"></i>پیگیری همین سفارش
                 </a>
-                <a href="{% url 'order_create' %}" class="btn btn-outline-primary btn-lg px-4">
-                    <i class="bi bi-plus-circle ms-1"></i>ثبت سفارش جدید
+                <a href="/" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="bi bi-house-fill ms-1"></i>صفحه اصلی
                 </a>
             </div>
         </div>
