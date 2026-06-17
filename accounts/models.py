@@ -33,7 +33,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=60,
         verbose_name='نام خانوادگی',
     )
-
+    national_id = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name='کد ملی',
+    )
+    date_of_birth = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name='تاریخ تولد',
+    )
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        blank=True,
+        null=True,
+        verbose_name='تصویر پروفایل',
+    )
     is_active = models.BooleanField(
         default=True,
         verbose_name='فعال',
