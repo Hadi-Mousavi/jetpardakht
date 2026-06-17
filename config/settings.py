@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'orders',
     'pages',
+    'kyc',
 ]
 
 MIDDLEWARE = [
