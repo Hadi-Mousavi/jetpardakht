@@ -8,6 +8,7 @@ from .models import (
     Category, Order, OrderAttachment,
     OrderMessage, OrderMessageAttachment, SubCategory,
 )
+from .forms import ValidatedOrderAttachmentForm, ValidatedOrderMessageAttachmentForm
 
 
 # ── Private-storage-safe file widget ──────────────────────────────────────────
@@ -87,6 +88,7 @@ class SubCategoryInline(admin.TabularInline):
 
 class OrderAttachmentInline(admin.TabularInline):
     model           = OrderAttachment
+    form            = ValidatedOrderAttachmentForm
     extra           = 0
     # _file_info is readonly; 'file' uses PrivateFileWidget so .url is never called.
     readonly_fields = ['_file_info', 'created_at']
@@ -102,6 +104,7 @@ class OrderAttachmentInline(admin.TabularInline):
 
 class OrderMessageAttachmentInline(admin.TabularInline):
     model           = OrderMessageAttachment
+    form            = ValidatedOrderMessageAttachmentForm
     extra           = 0
     # Same pattern: PrivateFileWidget for uploads; _file_info for existing files.
     readonly_fields = ['_file_info', 'uploaded_at']

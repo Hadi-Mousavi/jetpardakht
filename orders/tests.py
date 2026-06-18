@@ -185,13 +185,13 @@ class OrderAuthorizationTests(TestCase):
         resp = self.client_b.get(
             reverse('order_attachment_download', args=[self.att_a.pk])
         )
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 404)
 
     def test_user_b_cannot_download_user_a_message_attachment(self):
         resp = self.client_b.get(
             reverse('message_attachment_download', args=[self.msg_att_a.pk])
         )
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 404)
 
     # ── non-existent resources ───────────────────────────────────────────────
 
@@ -273,21 +273,21 @@ class DownloadSecurityTests(TestCase):
         content = b''.join(resp.streaming_content)
         self.assertEqual(content, b'%PDF-1.4 test')
 
-    # ── non-owner (403) ──────────────────────────────────────────────────────
+    # ── non-owner (404 — no existence disclosure) ───────────────────────────
 
-    def test_non_owner_attachment_download_403(self):
+    def test_non_owner_attachment_download_404(self):
         self.client.force_login(self.user_b)
         resp = self.client.get(
             reverse('order_attachment_download', args=[self.att_a.pk])
         )
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 404)
 
-    def test_non_owner_message_attachment_download_403(self):
+    def test_non_owner_message_attachment_download_404(self):
         self.client.force_login(self.user_b)
         resp = self.client.get(
             reverse('message_attachment_download', args=[self.msg_att_a.pk])
         )
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 404)
 
     # ── staff bypass ─────────────────────────────────────────────────────────
 
@@ -362,9 +362,11 @@ class UploadValidationTests(TestCase):
         self.assertEqual(self._count(), 1)
 
     def test_zip_upload_succeeds(self):
+        # b'PK\x03\x04' is the correct 4-byte ZIP local file header magic.
+        # b'PK' alone (2 bytes) is not enough for filetype to detect zip.
         resp = self.client.post(
             self.upload_url,
-            {'file': _file('archive.zip', b'PK', 'application/zip'), 'title': ''},
+            {'file': _file('archive.zip', b'PK\x03\x04', 'application/zip'), 'title': ''},
         )
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(self._count(), 1)
@@ -491,6 +493,346 @@ class UploadValidationTests(TestCase):
 
 
 # ===========================================================================
+# Magic bytes / file-content validation tests
+# ===========================================================================
+
+@override_settings(PRIVATE_MEDIA_ROOT=_PRIVATE_MEDIA_TMP)
+class MagicBytesValidationTests(TestCase):
+    """
+    Validate that upload validation reads actual file content (magic bytes)
+    rather than trusting the filename extension or Content-Type header.
+
+    Key attack prevented: renaming an executable or script to an allowed
+    extension (.jpg, .pdf, .docx, …) to bypass the extension check.
+    """
+
+    def setUp(self):
+        self.cat, self.sub = _make_category()
+        self.user = _make_user('magic@test.com', kyc_approved=True)
+        self.order = _make_order(self.user, self.cat, self.sub)
+        self.client.force_login(self.user)
+        self.upload_url = reverse('order_upload_attachment', args=[self.order.pk])
+
+    def _count(self):
+        return OrderAttachment.objects.filter(order=self.order).count()
+
+    # ── renamed Windows PE executables must be caught ─────────────────────────
+
+    def test_exe_renamed_to_jpg_blocked(self):
+        """Windows PE (MZ header) disguised as .jpg — magic bytes mismatch."""
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('photo.jpg', b'MZ\x90\x00\x03\x00', 'image/jpeg'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    def test_exe_renamed_to_pdf_blocked(self):
+        """Windows PE (MZ header) disguised as .pdf — magic bytes mismatch."""
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('invoice.pdf', b'MZ\x90\x00\x03\x00', 'application/pdf'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    def test_exe_renamed_to_docx_blocked(self):
+        """Windows PE (MZ header) disguised as .docx — magic bytes mismatch."""
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('report.docx', b'MZ\x90\x00\x03\x00', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    # ── unrecognized / corrupted content must be caught ───────────────────────
+
+    def test_fake_pdf_blocked(self):
+        """
+        File with .pdf extension but no recognizable magic bytes.
+        filetype.guess_mime() returns None → rejected.
+        """
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('fake.pdf', b'\x00\x01\x02\x03\x04\x05\x06\x07', 'application/pdf'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    def test_fake_jpg_blocked(self):
+        """ASCII text with .jpg extension — no JPEG SOI marker."""
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('fake.jpg', b'This is definitely not a JPEG!', 'image/jpeg'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    def test_fake_png_blocked(self):
+        """Null bytes with .png extension — no PNG signature."""
+        before = self._count()
+        self.client.post(
+            self.upload_url,
+            {'file': _file('fake.png', b'\x00' * 20, 'image/png'), 'title': ''},
+        )
+        self.assertEqual(self._count(), before)
+
+    # ── genuine files with correct magic bytes must pass ──────────────────────
+
+    def test_valid_pdf_passes(self):
+        """%PDF magic bytes → filetype detects application/pdf → accepted."""
+        self.client.post(
+            self.upload_url,
+            {'file': _file('real.pdf', b'%PDF-1.4 test content', 'application/pdf'), 'title': ''},
+        )
+        self.assertEqual(self._count(), 1)
+
+    def test_valid_jpeg_passes(self):
+        """JPEG SOI marker FF D8 FF → filetype detects image/jpeg → accepted."""
+        self.client.post(
+            self.upload_url,
+            {'file': _file('photo.jpg', b'\xff\xd8\xff\xe0\x00\x10JFIF', 'image/jpeg'), 'title': ''},
+        )
+        self.assertEqual(self._count(), 1)
+
+    def test_valid_png_passes(self):
+        r"""PNG signature \x89PNG\r\n\x1a\n → filetype detects image/png → accepted."""
+        self.client.post(
+            self.upload_url,
+            {'file': _file('image.png', b'\x89PNG\r\n\x1a\n', 'image/png'), 'title': ''},
+        )
+        self.assertEqual(self._count(), 1)
+
+    def test_valid_zip_passes(self):
+        """ZIP local-file-header magic PK\\x03\\x04 → accepted."""
+        self.client.post(
+            self.upload_url,
+            {'file': _file('archive.zip', b'PK\x03\x04', 'application/zip'), 'title': ''},
+        )
+        self.assertEqual(self._count(), 1)
+
+    # ── message attachment path also enforces magic bytes ─────────────────────
+
+    def test_exe_renamed_to_pdf_blocked_on_message_path(self):
+        """EXE with .pdf extension is blocked on the message-send path too."""
+        msg_url = reverse('order_send_message', args=[self.order.pk])
+        before = OrderMessage.objects.filter(order=self.order).count()
+        self.client.post(
+            msg_url,
+            {
+                'message': 'see attached',
+                'message_files': _file('evil.pdf', b'MZ\x90\x00', 'application/pdf'),
+            },
+        )
+        self.assertEqual(OrderMessage.objects.filter(order=self.order).count(), before)
+
+    # ── order-create path must surface errors to the user ─────────────────────
+
+    def test_order_create_shows_magic_byte_error(self):
+        """
+        Fake PDF on order-create re-renders the form with a visible Persian
+        error message; no order row is created.
+        """
+        before = Order.objects.filter(user=self.user).count()
+        resp = self.client.post(
+            reverse('order_create'),
+            {
+                'category':    self.cat.pk,
+                'subcategory': self.sub.pk,
+                'description': 'سفارش تست',
+                'attachment_files': _file(
+                    'fake.pdf', b'\x00\x01\x02\x03', 'application/pdf',
+                ),
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(Order.objects.filter(user=self.user).count(), before)
+        self.assertContains(resp, 'محتوای فایل با نوع مجاز مطابقت ندارد')
+        self.assertContains(resp, 'fake.pdf')
+        self.assertContains(resp, 'alert-danger')
+
+    def test_order_create_keeps_form_data_on_attachment_error(self):
+        """Text fields are preserved when attachment validation fails."""
+        resp = self.client.post(
+            reverse('order_create'),
+            {
+                'category':          self.cat.pk,
+                'subcategory':       self.sub.pk,
+                'description':       'توضیحات حفظ‌شده',
+                'organization_name': 'دانشگاه تست',
+                'attachment_files': _file(
+                    'bad.jpg', b'This is not a JPEG', 'image/jpeg',
+                ),
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'توضیحات حفظ‌شده')
+        self.assertContains(resp, 'دانشگاه تست')
+
+
+# ===========================================================================
+# Order detail — upload validation UX tests
+# ===========================================================================
+
+@override_settings(PRIVATE_MEDIA_ROOT=_PRIVATE_MEDIA_TMP)
+class OrderDetailValidationUxTests(TestCase):
+    """
+    Invalid uploads on an existing order must show Persian alert-danger
+    messages on order_detail and preserve entered form state.
+    """
+
+    def setUp(self):
+        self.cat, self.sub = _make_category()
+        self.user = _make_user('detailux@test.com', kyc_approved=True)
+        self.order = _make_order(self.user, self.cat, self.sub)
+        self.client.force_login(self.user)
+        self.upload_url = reverse('order_upload_attachment', args=[self.order.pk])
+        self.msg_url    = reverse('order_send_message', args=[self.order.pk])
+
+    def test_attachment_upload_shows_magic_byte_error(self):
+        """Fake PDF on order detail re-renders with alert-danger; no attachment."""
+        before = OrderAttachment.objects.filter(order=self.order).count()
+        resp = self.client.post(
+            self.upload_url,
+            {
+                'file':  _file('fake.pdf', b'\x00\x01\x02\x03', 'application/pdf'),
+                'title': 'سند جعلی',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(OrderAttachment.objects.filter(order=self.order).count(), before)
+        self.assertContains(resp, 'alert-danger')
+        self.assertContains(resp, 'محتوای فایل با نوع مجاز مطابقت ندارد')
+        self.assertContains(resp, 'fake.pdf')
+        self.assertContains(resp, self.order.order_number)
+
+    def test_attachment_upload_preserves_title_on_error(self):
+        """Optional title field is preserved when file validation fails."""
+        resp = self.client.post(
+            self.upload_url,
+            {
+                'file':  _file('bad.jpg', b'not a jpeg', 'image/jpeg'),
+                'title': 'عنوان حفظ‌شده',
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'عنوان حفظ‌شده')
+
+    def test_message_attachment_shows_magic_byte_error(self):
+        """Fake file on message send re-renders with alert-danger; no message."""
+        before = OrderMessage.objects.filter(order=self.order).count()
+        resp = self.client.post(
+            self.msg_url,
+            {
+                'message': 'پیام تست',
+                'message_files': _file('evil.pdf', b'MZ\x90\x00', 'application/pdf'),
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(OrderMessage.objects.filter(order=self.order).count(), before)
+        self.assertContains(resp, 'alert-danger')
+        self.assertContains(resp, 'evil.pdf')
+        self.assertContains(resp, 'محتوای فایل با نوع مجاز مطابقت ندارد')
+
+    def test_message_send_preserves_message_text_on_attachment_error(self):
+        """Message textarea content is preserved when attachment validation fails."""
+        resp = self.client.post(
+            self.msg_url,
+            {
+                'message': 'متن پیام حفظ‌شده',
+                'message_files': _file('bad.jpg', b'not jpeg', 'image/jpeg'),
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'متن پیام حفظ‌شده')
+
+
+# ===========================================================================
+# Admin upload validation (U2 parity with customer uploads)
+# ===========================================================================
+
+@override_settings(PRIVATE_MEDIA_ROOT=_PRIVATE_MEDIA_TMP)
+class AdminUploadValidationTests(TestCase):
+    """
+    Admin inline forms must call validate_upload() — same rules as customers.
+    """
+
+    def setUp(self):
+        self.cat, self.sub = _make_category()
+        self.user  = _make_user('admincust@test.com', kyc_approved=True)
+        self.staff = _make_user('adminstaff@test.com', is_staff=True)
+        self.staff.is_superuser = True
+        self.staff.save()
+        self.order = _make_order(self.user, self.cat, self.sub)
+
+    # ── ValidatedOrderAttachmentForm (direct) ───────────────────────────────
+
+    def test_admin_form_rejects_exe_renamed_as_pdf(self):
+        from .forms import ValidatedOrderAttachmentForm
+
+        form = ValidatedOrderAttachmentForm(
+            data={'title': '', 'uploaded_by': str(self.staff.pk)},
+            files={'file': _file('report.pdf', b'MZ\x90\x00', 'application/pdf')},
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+        self.assertIn('محتوای فایل', str(form.errors['file']))
+
+    def test_admin_form_rejects_fake_jpg(self):
+        from .forms import ValidatedOrderAttachmentForm
+
+        form = ValidatedOrderAttachmentForm(
+            data={'title': '', 'uploaded_by': str(self.staff.pk)},
+            files={'file': _file('photo.jpg', b'not a jpeg', 'image/jpeg')},
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+
+    def test_admin_form_rejects_oversized_file(self):
+        from .forms import ValidatedOrderAttachmentForm
+        from .utils import MAX_UPLOAD_BYTES
+
+        big = SimpleUploadedFile(
+            'big.pdf',
+            b'%PDF' + b'A' * (MAX_UPLOAD_BYTES + 1),
+            content_type='application/pdf',
+        )
+        form = ValidatedOrderAttachmentForm(
+            data={'title': '', 'uploaded_by': str(self.staff.pk)},
+            files={'file': big},
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+        self.assertIn('مگابایت', str(form.errors['file']))
+
+    def test_admin_form_accepts_valid_pdf(self):
+        from .forms import ValidatedOrderAttachmentForm
+
+        form = ValidatedOrderAttachmentForm(
+            data={'title': 'invoice', 'uploaded_by': str(self.staff.pk)},
+            files={'file': _file('invoice.pdf', b'%PDF-1.4', 'application/pdf')},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_message_attachment_form_rejects_fake_jpg(self):
+        from .forms import ValidatedOrderMessageAttachmentForm
+
+        form = ValidatedOrderMessageAttachmentForm(
+            data={},
+            files={'file': _file('fake.jpg', b'not a jpeg', 'image/jpeg')},
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('file', form.errors)
+
+    def test_inlines_use_validated_forms(self):
+        from .admin import OrderAttachmentInline, OrderMessageAttachmentInline
+        from .forms import ValidatedOrderAttachmentForm, ValidatedOrderMessageAttachmentForm
+
+        self.assertIs(OrderAttachmentInline.form, ValidatedOrderAttachmentForm)
+        self.assertIs(OrderMessageAttachmentInline.form, ValidatedOrderMessageAttachmentForm)
+
+
+# ===========================================================================
 # Authentication / CSRF / access-control tests
 # ===========================================================================
 
@@ -506,6 +848,7 @@ class AuthenticationTests(TestCase):
         ('order_upload_attachment',     [1]),
         ('order_attachment_download',   [1]),
         ('message_attachment_download', [1]),
+        ('ajax_subcategories',          []),
     ]
 
     def test_all_protected_views_redirect_anonymous(self):
@@ -520,6 +863,31 @@ class AuthenticationTests(TestCase):
                     'login', resp['Location'].lower(),
                     msg=f'{name} should redirect to login',
                 )
+
+    def test_ajax_subcategories_authenticated_returns_json(self):
+        """Logged-in users receive the same subcategory JSON as before."""
+        cat, sub = _make_category()
+        user = _make_user('ajax@test.com', kyc_approved=True)
+        self.client.force_login(user)
+
+        resp = self.client.get(
+            reverse('ajax_subcategories'),
+            {'category_id': cat.pk},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        data = resp.json()
+        self.assertEqual(len(data['subcategories']), 1)
+        self.assertEqual(data['subcategories'][0]['id'], sub.pk)
+        self.assertEqual(data['subcategories'][0]['title'], sub.title)
+
+    def test_ajax_subcategories_anonymous_redirects_to_login(self):
+        resp = self.client.get(
+            reverse('ajax_subcategories'),
+            {'category_id': 1},
+        )
+        self.assertIn(resp.status_code, [301, 302])
+        self.assertIn('login', resp['Location'].lower())
 
     def test_tracking_page_is_public(self):
         """order_tracking has no @login_required — public lookup by design."""
@@ -770,3 +1138,87 @@ class RegressionTests(TestCase):
         self.assertIsNotNone(att)
         with self.assertRaises(ValueError):
             _ = att.file.url
+
+
+# ===========================================================================
+# Rate limiting (R1)
+# ===========================================================================
+
+@override_settings(PRIVATE_MEDIA_ROOT=_PRIVATE_MEDIA_TMP, RATELIMIT_ENABLE=True)
+class OrderRateLimitTests(TestCase):
+    """django-ratelimit protection on order endpoints."""
+
+    def setUp(self):
+        from django.core.cache import cache
+
+        from config.ratelimit_handlers import RATE_LIMIT_MESSAGE
+
+        cache.clear()
+        self.rate_limit_message = RATE_LIMIT_MESSAGE
+        self.cat, self.sub = _make_category()
+        self.user = _make_user('ratelimit@test.com', kyc_approved=True)
+        self.order = _make_order(self.user, self.cat, self.sub)
+        self.client.force_login(self.user)
+
+    def test_order_tracking_rate_limit_by_ip(self):
+        url = reverse('order_tracking')
+        for _ in range(30):
+            resp = self.client.get(url)
+            self.assertNotEqual(resp.status_code, 429)
+
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 429)
+        self.assertContains(resp, self.rate_limit_message, status_code=429)
+
+    def test_order_create_rate_limit_by_user(self):
+        url = reverse('order_create')
+        payload = {
+            'category':    self.cat.pk,
+            'subcategory': self.sub.pk,
+            'description': 'Rate limit test order',
+        }
+        for _ in range(10):
+            resp = self.client.post(url, payload)
+            self.assertNotEqual(resp.status_code, 429)
+
+        resp = self.client.post(url, payload)
+        self.assertEqual(resp.status_code, 429)
+        self.assertContains(resp, self.rate_limit_message, status_code=429)
+
+    def test_order_message_rate_limit_by_user(self):
+        url = reverse('order_send_message', args=[self.order.pk])
+        for i in range(20):
+            resp = self.client.post(url, {'message': f'message {i}'})
+            self.assertNotEqual(resp.status_code, 429)
+
+        resp = self.client.post(url, {'message': 'blocked message'})
+        self.assertEqual(resp.status_code, 429)
+        self.assertContains(resp, self.rate_limit_message, status_code=429)
+
+    def test_file_upload_rate_limit_by_user(self):
+        url = reverse('order_upload_attachment', args=[self.order.pk])
+        for i in range(20):
+            resp = self.client.post(
+                url,
+                {'file': _file(f'doc{i}.pdf', b'%PDF', 'application/pdf'), 'title': ''},
+            )
+            self.assertNotEqual(resp.status_code, 429)
+
+        resp = self.client.post(
+            url,
+            {'file': _file('blocked.pdf', b'%PDF', 'application/pdf'), 'title': ''},
+        )
+        self.assertEqual(resp.status_code, 429)
+        self.assertContains(resp, self.rate_limit_message, status_code=429)
+
+    def test_authenticated_order_create_works_under_limit(self):
+        """Logged-in users still succeed when under the rate limit."""
+        resp = self.client.post(
+            reverse('order_create'),
+            {
+                'category':    self.cat.pk,
+                'subcategory': self.sub.pk,
+                'description': 'Single order under limit',
+            },
+        )
+        self.assertEqual(resp.status_code, 302)

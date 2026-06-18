@@ -1,8 +1,9 @@
 from django.contrib import messages as flash
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django_ratelimit.decorators import ratelimit
 
 from kyc.models import KYCProfile
 
@@ -21,6 +22,19 @@ def _kyc_profile(user):
         return user.kyc_profile
     except KYCProfile.DoesNotExist:
         return None
+
+
+def _render_order_detail(request, order, msg_form=None, attach_form=None):
+    """Shared render helper — keeps queryset logic in one place."""
+    order_msgs  = order.messages.select_related('sender').prefetch_related('attachments')
+    attachments = order.attachments.select_related('uploaded_by')
+    return render(request, 'orders/order_detail.html', {
+        'order':        order,
+        'order_msgs':   order_msgs,
+        'attachments':  attachments,
+        'msg_form':     msg_form if msg_form is not None else MessageForm(),
+        'attach_form':  attach_form if attach_form is not None else AttachmentForm(),
+    })
 
 
 # ── customer views ────────────────────────────────────────────────────────────
@@ -42,6 +56,8 @@ def order_list(request):
     })
 
 
+@ratelimit(key='user', rate='20/h', method='POST', block=True, group='file_uploads')
+@ratelimit(key='user', rate='10/h', method='POST', block=True, group='order_create')
 @login_required
 def order_create(request):
     kyc          = _kyc_profile(request.user)
@@ -97,21 +113,12 @@ def order_create(request):
 
 @login_required
 def order_detail(request, pk):
-    order       = get_object_or_404(Order, pk=pk, user=request.user)
-    order_msgs  = order.messages.select_related('sender').prefetch_related('attachments')
-    attachments = order.attachments.select_related('uploaded_by')
-    msg_form    = MessageForm()
-    attach_form = AttachmentForm()
-
-    return render(request, 'orders/order_detail.html', {
-        'order':        order,
-        'order_msgs':   order_msgs,
-        'attachments':  attachments,
-        'msg_form':     msg_form,
-        'attach_form':  attach_form,
-    })
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    return _render_order_detail(request, order)
 
 
+@ratelimit(key='user', rate='20/h', method='POST', block=True, group='file_uploads')
+@ratelimit(key='user', rate='20/h', method='POST', block=True, group='order_messages')
 @login_required
 def order_send_message(request, pk):
     order = get_object_or_404(Order, pk=pk, user=request.user)
@@ -132,6 +139,7 @@ def order_send_message(request, pk):
             if file_errors:
                 for err in file_errors:
                     flash.error(request, err)
+                return _render_order_detail(request, order, msg_form=form)
             else:
                 msg        = form.save(commit=False)
                 msg.order  = order
@@ -139,10 +147,16 @@ def order_send_message(request, pk):
                 msg.save()
                 for f in msg_files:
                     OrderMessageAttachment.objects.create(message=msg, file=f)
+                return redirect('order_detail', pk=pk)
+        else:
+            for err in form.errors.get('message', []):
+                flash.error(request, err)
+            return _render_order_detail(request, order, msg_form=form)
 
     return redirect('order_detail', pk=pk)
 
 
+@ratelimit(key='user', rate='20/h', method='POST', block=True, group='file_uploads')
 @login_required
 def order_upload_attachment(request, pk):
     order = get_object_or_404(Order, pk=pk, user=request.user)
@@ -154,12 +168,19 @@ def order_upload_attachment(request, pk):
             att.order       = order
             att.uploaded_by = request.user
             att.save()
+            return redirect('order_detail', pk=pk)
+        for err in form.errors.get('file', []):
+            uploaded = request.FILES.get('file')
+            name = uploaded.name if uploaded else ''
+            flash.error(request, f'{name}: {err}' if name else err)
+        return _render_order_detail(request, order, attach_form=form)
 
     return redirect('order_detail', pk=pk)
 
 
 # ── AJAX ──────────────────────────────────────────────────────────────────────
 
+@login_required
 def ajax_subcategories(request):
     """Return JSON list of active subcategories for a given category."""
     try:
@@ -178,6 +199,7 @@ def ajax_subcategories(request):
 
 # ── public tracking page (kept for backward compatibility) ────────────────────
 
+@ratelimit(key='ip', rate='30/m', block=True, group='order_tracking')
 def order_tracking(request):
     order = None
     error = None
@@ -213,13 +235,17 @@ def order_attachment_download(request, pk):
     Access rules:
       - Staff: unrestricted.
       - Customer: must own the order the attachment belongs to.
-    Returns 404 if the attachment row or file on disk does not exist.
-    Returns 403 if access is denied.
+    Returns 404 if the attachment does not exist, is not owned by the
+    customer, or the file on disk is missing.
     """
-    att = get_object_or_404(OrderAttachment, pk=pk)
-
-    if not request.user.is_staff and att.order.user != request.user:
-        raise PermissionDenied
+    if request.user.is_staff:
+        att = get_object_or_404(OrderAttachment, pk=pk)
+    else:
+        att = get_object_or_404(
+            OrderAttachment.objects.select_related('order'),
+            pk=pk,
+            order__user=request.user,
+        )
 
     if not att.file:
         raise Http404
@@ -241,16 +267,20 @@ def message_attachment_download(request, pk):
     Access rules:
       - Staff: unrestricted.
       - Customer: must own the order the message belongs to.
-    Returns 404 if the attachment row or file on disk does not exist.
-    Returns 403 if access is denied.
+    Returns 404 if the attachment does not exist, is not owned by the
+    customer, or the file on disk is missing.
     """
-    att = get_object_or_404(
-        OrderMessageAttachment.objects.select_related('message__order'),
-        pk=pk,
-    )
-
-    if not request.user.is_staff and att.message.order.user != request.user:
-        raise PermissionDenied
+    if request.user.is_staff:
+        att = get_object_or_404(
+            OrderMessageAttachment.objects.select_related('message__order'),
+            pk=pk,
+        )
+    else:
+        att = get_object_or_404(
+            OrderMessageAttachment.objects.select_related('message__order'),
+            pk=pk,
+            message__order__user=request.user,
+        )
 
     if not att.file:
         raise Http404

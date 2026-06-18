@@ -2,6 +2,8 @@
 Django settings for JetPay24.
 """
 
+import sys
+
 from pathlib import Path
 
 from decouple import Csv, config
@@ -50,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_ratelimit.middleware.RatelimitMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -174,3 +177,22 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+# ---------------------------------------------------------------------------
+# Rate limiting (django-ratelimit)
+# ---------------------------------------------------------------------------
+# Disabled automatically during `manage.py test` so the existing suite is
+# unaffected.  Rate-limit tests opt in with @override_settings(RATELIMIT_ENABLE=True).
+
+RATELIMIT_ENABLE = config(
+    'RATELIMIT_ENABLE',
+    default='test' not in sys.argv,
+    cast=bool,
+)
+RATELIMIT_VIEW = 'config.ratelimit_handlers.ratelimited_error'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}

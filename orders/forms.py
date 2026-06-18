@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Category, Order, OrderAttachment, OrderMessage, SubCategory
+from .models import Category, Order, OrderAttachment, OrderMessage, OrderMessageAttachment, SubCategory
 from .utils import validate_upload
 
 _INPUT   = 'form-control'
@@ -117,6 +117,40 @@ class AttachmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].required = False
+
+    def clean_file(self):
+        f = self.cleaned_data.get('file')
+        validate_upload(f)
+        return f
+
+
+class ValidatedOrderAttachmentForm(forms.ModelForm):
+    """
+    Admin inline form for OrderAttachment.
+
+    Uses the same validate_upload() pipeline as customer AttachmentForm.
+    """
+
+    class Meta:
+        model  = OrderAttachment
+        fields = ['file', 'title', 'uploaded_by']
+
+    def clean_file(self):
+        f = self.cleaned_data.get('file')
+        validate_upload(f)
+        return f
+
+
+class ValidatedOrderMessageAttachmentForm(forms.ModelForm):
+    """
+    Admin inline form for OrderMessageAttachment.
+
+    Uses the same validate_upload() pipeline as customer message uploads.
+    """
+
+    class Meta:
+        model  = OrderMessageAttachment
+        fields = ['file']
 
     def clean_file(self):
         f = self.cleaned_data.get('file')

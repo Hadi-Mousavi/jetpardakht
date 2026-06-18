@@ -90,6 +90,16 @@
             </p>
         </div>
 
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if 'error' in message.tags %}danger{% elif 'success' in message.tags %}success{% else %}info{% endif %} alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-{% if 'error' in message.tags %}exclamation-triangle-fill{% elif 'success' in message.tags %}check-circle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% if kyc_blocked %}
         <!-- KYC block screen -->
         <div class="kyc-block">

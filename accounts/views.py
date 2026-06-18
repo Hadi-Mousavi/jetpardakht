@@ -2,12 +2,14 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django_ratelimit.decorators import ratelimit
 
 from kyc.models import KYCProfile
 from .forms import LoginForm, RegistrationForm
 from .models import User
 
 
+@ratelimit(key='ip', rate='5/h', method='POST', block=True, group='register')
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -30,6 +32,7 @@ def register(request):
     })
 
 
+@ratelimit(key='ip', rate='5/5m', method='POST', block=True, group='login')
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)
