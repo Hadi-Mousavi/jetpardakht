@@ -73,6 +73,7 @@
             font-weight: 600; border-right: 3px solid var(--jp-primary-medium);
         }
         .sidebar-link i { font-size: 1.1rem; width: 1.4rem; text-align: center; }
+        .sidebar-unread-count { font-weight: 700; color: var(--jp-primary-medium); }
 
         /* ── Layout ─────────────────────────────────── */
         .dash-wrapper { flex: 1; display: flex; }
@@ -254,7 +255,7 @@
         <a href="{% url 'dashboard' %}" class="sidebar-link"><i class="bi bi-grid-1x2"></i>داشبورد</a>
         <a href="#" class="sidebar-link"><i class="bi bi-person"></i>پروفایل</a>
         <a href="{% url 'kyc_submit' %}" class="sidebar-link active"><i class="bi bi-shield-check"></i>احراز هویت (KYC)</a>
-        <a href="#" class="sidebar-link"><i class="bi bi-receipt"></i>سفارش‌های من</a>
+        <a href="{% url 'order_list' %}" class="sidebar-link"><i class="bi bi-receipt"></i>سفارش‌های من{% if unread_message_count %} <span class="sidebar-unread-count">({{ unread_message_count }})</span>{% endif %}</a>
     </aside>
 
     <!-- Main -->

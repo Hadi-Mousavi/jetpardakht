@@ -1,0 +1,609 @@
+/*
+ * JetPay24 Admin RTL overrides for Jazzmin / AdminLTE 3.
+ * Loaded via JAZZMIN_SETTINGS["custom_css"] when LANGUAGE_CODE is fa (html[dir="rtl"]).
+ */
+
+:root {
+    --jp-sidebar-width: 280px;
+    --jp-sidebar-collapsed: 4.6rem;
+}
+
+/* ── Global RTL shell ─────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl {
+    direction: rtl;
+    text-align: right;
+    overflow-x: hidden;
+}
+
+html[dir="rtl"] .wrapper {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+
+html[dir="rtl"] .wrapper,
+html[dir="rtl"] .content-wrapper,
+html[dir="rtl"] .content,
+html[dir="rtl"] .container-fluid,
+html[dir="rtl"] section.content {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .content-wrapper {
+    overflow-x: hidden;
+}
+
+html[dir="rtl"] .content-wrapper > .content {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* ── Sidebar on the right ─────────────────────────────────────────────────── */
+
+html[dir="rtl"] .main-sidebar,
+html[dir="rtl"] #jazzy-sidebar {
+    right: 0 !important;
+    left: auto !important;
+    width: var(--jp-sidebar-width) !important;
+    overflow-x: hidden !important;
+}
+
+html[dir="rtl"] .layout-fixed .main-sidebar {
+    right: 0 !important;
+    left: auto !important;
+}
+
+html[dir="rtl"] .main-sidebar .sidebar,
+html[dir="rtl"] #jazzy-sidebar .sidebar {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    width: 100%;
+    padding-bottom: 1.5rem;
+}
+
+html[dir="rtl"] .content-wrapper,
+html[dir="rtl"] .main-footer {
+    margin-right: var(--jp-sidebar-width) !important;
+    margin-left: 0 !important;
+}
+
+html[dir="rtl"] .main-header {
+    margin-right: var(--jp-sidebar-width) !important;
+    margin-left: 0 !important;
+}
+
+html[dir="rtl"] body.sidebar-collapse .content-wrapper,
+html[dir="rtl"] body.sidebar-collapse .main-footer,
+html[dir="rtl"] body.sidebar-collapse .main-header,
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse .content-wrapper,
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse .main-footer,
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse .main-header {
+    margin-right: var(--jp-sidebar-collapsed) !important;
+    margin-left: 0 !important;
+}
+
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse .main-sidebar,
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse #jazzy-sidebar {
+    width: var(--jp-sidebar-collapsed) !important;
+}
+
+html[dir="rtl"] .main-sidebar::before {
+    right: 0 !important;
+    left: auto !important;
+    width: var(--jp-sidebar-width) !important;
+}
+
+html[dir="rtl"] body.sidebar-mini.sidebar-collapse .main-sidebar::before {
+    width: var(--jp-sidebar-collapsed) !important;
+}
+
+html[dir="rtl"] .brand-link {
+    text-align: right;
+}
+
+html[dir="rtl"] .brand-link .brand-image {
+    float: right;
+    margin-left: 0.5rem;
+    margin-right: 0.8rem;
+}
+
+html[dir="rtl"] .nav-sidebar .nav-link {
+    text-align: right;
+    white-space: normal;
+    line-height: 1.45;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+}
+
+html[dir="rtl"] .nav-sidebar .nav-link p {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    margin: 0;
+    line-height: 1.45;
+}
+
+html[dir="rtl"] .nav-sidebar .nav-link .nav-icon {
+    margin-right: 0;
+    margin-left: 0.2rem;
+}
+
+html[dir="rtl"] .nav-sidebar .nav-link p .right {
+    right: auto;
+    left: 1rem;
+    transform: rotate(180deg);
+}
+
+html[dir="rtl"] .nav-sidebar .nav-treeview {
+    padding-right: 1rem;
+    padding-left: 0;
+}
+
+html[dir="rtl"] .user-panel .image {
+    padding-right: 0.8rem;
+    padding-left: 0;
+}
+
+html[dir="rtl"] .user-panel .info {
+    text-align: right;
+}
+
+/* ── Top navbar ───────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] .navbar-nav.ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+html[dir="rtl"] .navbar-nav .nav-link .mr-2,
+html[dir="rtl"] .dropdown-item .mr-2 {
+    margin-right: 0 !important;
+    margin-left: 0.5rem !important;
+}
+
+html[dir="rtl"] .dropdown-menu-left {
+    right: 0;
+    left: auto;
+}
+
+html[dir="rtl"] .main-header .navbar-nav:first-child .nav-item:first-child {
+    order: 1;
+}
+
+/* ── Page header + breadcrumbs ─────────────────────────────────────────────── */
+
+html[dir="rtl"] .content .h4.border-right,
+html[dir="rtl"] .content h1.border-right {
+    border-right: 0 !important;
+    border-left: 1px solid #dee2e6 !important;
+    padding-right: 0 !important;
+    padding-left: 1rem !important;
+    margin-right: 0 !important;
+    margin-left: 1rem !important;
+}
+
+html[dir="rtl"] .breadcrumb {
+    direction: rtl;
+    text-align: right;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+html[dir="rtl"] .breadcrumb-item + .breadcrumb-item {
+    padding-right: 0.5rem;
+    padding-left: 0;
+}
+
+html[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+    float: right;
+    padding-right: 0;
+    padding-left: 0.5rem;
+    content: "\2039";
+}
+
+html[dir="rtl"] .page-actions {
+    justify-content: flex-start !important;
+}
+
+html[dir="rtl"] .float-right,
+html[dir="rtl"] .btn-group.float-right {
+    float: left !important;
+}
+
+html[dir="rtl"] .float-left {
+    float: right !important;
+}
+
+html[dir="rtl"] .text-left {
+    text-align: right !important;
+}
+
+html[dir="rtl"] .text-right {
+    text-align: left !important;
+}
+
+/* ── Dashboard ──────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] .dashboard .row {
+    direction: rtl;
+}
+
+html[dir="rtl"] .dashboard .card-header h5,
+html[dir="rtl"] .dashboard .card-body,
+html[dir="rtl"] #recent-actions-module,
+html[dir="rtl"] #recent-actions-module h4,
+html[dir="rtl"] #recent-actions-module p {
+    text-align: right;
+}
+
+html[dir="rtl"] .dashboard .table td {
+    text-align: right;
+}
+
+html[dir="rtl"] .dashboard .table .btn-group {
+    float: left !important;
+}
+
+html[dir="rtl"] .timeline {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .timeline::before {
+    right: 31px;
+    left: auto;
+}
+
+html[dir="rtl"] .timeline > div > .fa,
+html[dir="rtl"] .timeline > div > .fas,
+html[dir="rtl"] .timeline > div > .far {
+    right: 18px;
+    left: auto;
+}
+
+html[dir="rtl"] .timeline > div > .timeline-item {
+    margin-right: 60px;
+    margin-left: 0;
+}
+
+html[dir="rtl"] .timeline-item .time {
+    float: left;
+}
+
+html[dir="rtl"] .timeline-header,
+html[dir="rtl"] .timeline-body {
+    text-align: right;
+}
+
+/* ── Forms ─────────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] form,
+html[dir="rtl"] fieldset,
+html[dir="rtl"] .form-row,
+html[dir="rtl"] .card-body form,
+html[dir="rtl"] .aligned label,
+html[dir="rtl"] .help,
+html[dir="rtl"] .help-block,
+html[dir="rtl"] p.help,
+html[dir="rtl"] .description,
+html[dir="rtl"] .inline-group h2,
+html[dir="rtl"] .inline-related h3,
+html[dir="rtl"] .submit-row,
+html[dir="rtl"] #jazzy-actions,
+html[dir="rtl"] .card .card-header {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html[dir="rtl"] textarea,
+html[dir="rtl"] select,
+html[dir="rtl"] .vTextField,
+html[dir="rtl"] .vLargeTextField {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .aligned label {
+    float: right;
+    padding-left: 0.5rem;
+    padding-right: 0;
+}
+
+html[dir="rtl"] .aligned .form-row input,
+html[dir="rtl"] .aligned .form-row select,
+html[dir="rtl"] .aligned .form-row textarea {
+    margin-right: 0;
+}
+
+html[dir="rtl"] form ul.radiolist input[type="radio"] {
+    margin: -2px 0 0 4px;
+}
+
+html[dir="rtl"] form ul.inline {
+    margin-right: 0;
+    padding-right: 0;
+}
+
+html[dir="rtl"] form ul.inline li {
+    float: right;
+    padding-right: 0;
+    padding-left: 7px;
+}
+
+html[dir="rtl"] .selector {
+    direction: rtl;
+}
+
+html[dir="rtl"] .selector-available,
+html[dir="rtl"] .selector-chosen {
+    float: right;
+}
+
+html[dir="rtl"] .selector .selector-filter {
+    text-align: right;
+}
+
+html[dir="rtl"] .selector ul.selector-chooser {
+    float: right;
+}
+
+html[dir="rtl"] .submit-row input,
+html[dir="rtl"] .submit-row a,
+html[dir="rtl"] .submit-row button {
+    float: none;
+}
+
+html[dir="rtl"] #jazzy-actions input[type="submit"],
+html[dir="rtl"] #jazzy-actions .btn,
+html[dir="rtl"] #jazzy-actions a.btn,
+html[dir="rtl"] .jp-actions-card .jp-btn {
+    float: none !important;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+}
+
+html[dir="rtl"] .inline-group .tabular thead th,
+html[dir="rtl"] .inline-group .tabular tbody td {
+    text-align: right;
+}
+
+html[dir="rtl"] .inline-group .tabular td.delete {
+    text-align: center;
+}
+
+html[dir="rtl"] .related-widget-wrapper {
+    float: right;
+}
+
+html[dir="rtl"] .related-widget-wrapper-link {
+    margin-right: 0;
+    margin-left: 0.25rem;
+}
+
+/* ── Tables / changelist ───────────────────────────────────────────────────── */
+
+html[dir="rtl"] table,
+html[dir="rtl"] .table,
+html[dir="rtl"] #result_list,
+html[dir="rtl"] #changelist,
+html[dir="rtl"] #changelist-form,
+html[dir="rtl"] .change-list .results,
+html[dir="rtl"] .module table {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] #result_list thead th,
+html[dir="rtl"] #result_list tbody td,
+html[dir="rtl"] .table thead th,
+html[dir="rtl"] .table tbody td {
+    text-align: right;
+}
+
+html[dir="rtl"] #changelist .actions {
+    text-align: right;
+}
+
+html[dir="rtl"] #changelist .actions select,
+html[dir="rtl"] #changelist .actions label,
+html[dir="rtl"] #changelist .actions button {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
+html[dir="rtl"] #changelist-filter {
+    right: auto;
+    left: 0;
+}
+
+html[dir="rtl"] .change-list .paginator {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .change-list .paginator .this-page {
+    margin-left: 0.25rem;
+    margin-right: 0;
+}
+
+/* ── Login / misc ──────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] .login-box,
+html[dir="rtl"] .register-box {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .alert .close {
+    float: left;
+}
+
+html[dir="rtl"] .alert-dismissible {
+    padding-right: 1.25rem;
+    padding-left: 4rem;
+}
+
+html[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+    text-align: right;
+}
+
+html[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__arrow {
+    right: auto;
+    left: 1px;
+}
+
+@media (min-width: 1280px) {
+    html[dir="rtl"] .content-wrapper > .content {
+        padding-left: 1.75rem;
+        padding-right: 1.75rem;
+    }
+
+    html[dir="rtl"] .jp-dashboard-grid .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    html[dir="rtl"] .content-wrapper,
+    html[dir="rtl"] .main-footer,
+    html[dir="rtl"] .main-header {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ── AdminLTE LTR layout neutralization ─────────────────────────────────────── */
+/* AdminLTE always sets margin-left:250px on content; RTL must zero it out. */
+
+html[dir="rtl"] body.jetpay-admin-rtl .content-wrapper,
+html[dir="rtl"] body.jetpay-admin-rtl .main-header,
+html[dir="rtl"] body.jetpay-admin-rtl .main-footer,
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini .content-wrapper,
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini .main-header,
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini .main-footer,
+html[dir="rtl"] body.jetpay-admin-rtl.layout-fixed .content-wrapper,
+html[dir="rtl"] body.jetpay-admin-rtl.layout-fixed .main-header,
+html[dir="rtl"] body.jetpay-admin-rtl.layout-fixed .main-footer {
+    margin-left: 0 !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-sidebar,
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-sidebar,
+html[dir="rtl"] body.jetpay-admin-rtl .main-sidebar::before {
+    left: auto !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini.sidebar-collapse .main-sidebar:hover,
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused,
+html[dir="rtl"] body.jetpay-admin-rtl.sidebar-mini.sidebar-collapse .main-sidebar:hover::before {
+    width: var(--jp-sidebar-width) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl section#content > .row {
+    margin-right: 0;
+    margin-left: 0;
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-change-form-row {
+    margin-right: 0;
+    margin-left: 0;
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-form-column,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-column,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-dashboard-main,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-dashboard-sidebar {
+    max-width: 100%;
+    min-width: 0;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-inline-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-inline-table {
+    width: 100%;
+    white-space: normal;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-inline-table th,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-inline-table td {
+    white-space: normal;
+    word-break: break-word;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .selector {
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .selector-available,
+html[dir="rtl"] body.jetpay-admin-rtl .selector-chosen {
+    float: none;
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .selector select {
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-field-label {
+    text-align: right !important;
+}
+
+/* ── LTR exceptions (email, order/tracking codes, filenames, URLs) ─────────── */
+
+html[dir="rtl"] .jp-ltr,
+html[dir="rtl"] input[name="email"],
+html[dir="rtl"] input[name="order_number"],
+html[dir="rtl"] input[name="code"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] .vURLField,
+html[dir="rtl"] .field-email,
+html[dir="rtl"] .field-email input,
+html[dir="rtl"] .field-email a,
+html[dir="rtl"] .field-order_number,
+html[dir="rtl"] .field-order_number input,
+html[dir="rtl"] .field-order_number .readonly,
+html[dir="rtl"] .column-email,
+html[dir="rtl"] .column-order_number,
+html[dir="rtl"] .field-_file_info,
+html[dir="rtl"] .field-_file_info a,
+html[dir="rtl"] .field-_file_info div,
+html[dir="rtl"] td.field-_file_info,
+html[dir="rtl"] .field-file a,
+html[dir="rtl"] .content a[href^="http://"],
+html[dir="rtl"] .content a[href^="https://"],
+html[dir="rtl"] .content a[href^="/media/"],
+html[dir="rtl"] .content a[href*="/download/"],
+html[dir="rtl"] .timeline-header a[href*="order"],
+html[dir="rtl"] .app-orders.model-order.change-list #result_list tbody td.field-order_number,
+html[dir="rtl"] .app-orders.model-order.change-list #result_list tbody td.field-order_number a {
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: embed;
+}
+
+html[dir="rtl"] input[name="email"],
+html[dir="rtl"] input[name="order_number"],
+html[dir="rtl"] input[name="code"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] .field-email input,
+html[dir="rtl"] .field-order_number input {
+    unicode-bidi: plaintext;
+}

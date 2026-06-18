@@ -37,6 +37,8 @@
         .sidebar-link:hover { background:rgba(143,192,219,.2); color:var(--jp-primary-dark); }
         .sidebar-link.active { background:var(--jp-primary-lightest); color:var(--jp-primary-dark); font-weight:600; border-right:3px solid var(--jp-primary-medium); }
         .sidebar-link i { font-size:1.1rem; width:1.4rem; text-align:center; }
+        .sidebar-unread-count { font-weight:700; color:var(--jp-primary-medium); }
+        .unread-msg-hint { font-size:.78rem; color:var(--jp-primary-medium); font-weight:600; margin-top:.25rem; }
         /* Layout */
         .dash-wrapper { flex:1; display:flex; }
         .dash-main { flex:1; padding:2rem 1.75rem; }
@@ -100,7 +102,7 @@
             <i class="bi bi-shield-check"></i>احراز هویت (KYC)
         </a>
         <a href="{% url 'order_list' %}" class="sidebar-link active">
-            <i class="bi bi-receipt"></i>سفارش‌های من
+            <i class="bi bi-receipt"></i>سفارش‌های من{% if unread_message_count %} <span class="sidebar-unread-count">({{ unread_message_count }})</span>{% endif %}
         </a>
     </aside>
 
@@ -167,6 +169,9 @@
                                     <span class="fw-semibold" dir="ltr" style="font-size:.85rem;letter-spacing:.03em;">
                                         {{ order.order_number }}
                                     </span>
+                                    {% if order.unread_count %}
+                                    <div class="unread-msg-hint">💬 {{ order.unread_count }} پیام جدید</div>
+                                    {% endif %}
                                 </td>
                                 <td>{{ order.category.title }}</td>
                                 <td>{{ order.subcategory.title }}</td>

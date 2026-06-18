@@ -1,0 +1,115 @@
+# Persian translations for JetPay24 Django Admin (core overrides + Jazzmin).
+msgid ""
+msgstr ""
+"Project-Id-Version: JetPay24\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+# ── Django admin (required UI strings) ───────────────────────────────────────
+
+msgid "Home"
+msgstr "خانه"
+
+msgid "Recent actions"
+msgstr "فعالیت‌های اخیر"
+
+msgid "Add"
+msgstr "افزودن"
+
+msgid "Change"
+msgstr "تغییر"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Save"
+msgstr "ذخیره"
+
+msgid "Save and continue editing"
+msgstr "ذخیره و ادامهٔ ویرایش"
+
+msgid "Save and add another"
+msgstr "ذخیره و افزودن مورد دیگر"
+
+msgid "Groups"
+msgstr "گروه‌ها"
+
+msgid "Submit"
+msgstr "ارسال"
+
+msgid "Yes, I'm sure"
+msgstr "بله، مطمئنم"
+
+msgid "Cancel"
+msgstr "انصراف"
+
+msgid "Back"
+msgstr "بازگشت"
+
+msgid "Select all"
+msgstr "انتخاب همه"
+
+msgid "Name"
+msgstr "نام"
+
+msgid "Type"
+msgstr "نوع"
+
+msgid "Now"
+msgstr "اکنون"
+
+msgid "Log entry"
+msgstr "ورودی گزارش"
+
+# ── Jazzmin ──────────────────────────────────────────────────────────────────
+
+msgid "Dashboard"
+msgstr "داشبورد"
+
+msgid "Account"
+msgstr "حساب"
+
+msgid "See Profile"
+msgstr "مشاهده پروفایل"
+
+msgid "Jazzmin version"
+msgstr "نسخه Jazzmin"
+
+msgid "Copyright"
+msgstr "حق نشر"
+
+msgid "All rights reserved."
+msgstr "تمامی حقوق محفوظ است."
+
+msgid "UI Configuration"
+msgstr "پیکربندی رابط کاربری"
+
+msgid "Copy this info your settings file to persist these UI changes"
+msgstr "این تنظیمات را در فایل settings ذخیره کنید تا تغییرات رابط کاربری پایدار بماند."
+
+msgid "%(timesince)s ago"
+msgstr "%(timesince)s پیش"
+
+msgid "Actions"
+msgstr "اقدامات"
+
+msgid "View"
+msgstr "مشاهده"
+
+msgid "Go"
+msgstr "رفتن"
+
+msgid "None available"
+msgstr "موردی موجود نیست"
+
+msgid "Added {name} “{object}”."
+msgstr "{name} «{object}» اضافه شد."
+
+msgid "Deleted “{object}”."
+msgstr "«{object}» حذف شد."
+
+msgid "Could not reverse url from {instance}"
+msgstr "امکان ساخت آدرس برای {instance} وجود نداشت."

@@ -121,8 +121,8 @@ class OrderMessageAttachmentInline(admin.TabularInline):
 class OrderMessageInline(admin.StackedInline):
     model          = OrderMessage
     extra          = 1
-    readonly_fields = ['created_at']
-    fields         = ['sender', 'message', 'created_at']
+    readonly_fields = ['created_at', 'is_read']
+    fields         = ['sender', 'message', 'is_read', 'created_at']
     ordering       = ['created_at']
     show_change_link = True
 
@@ -225,10 +225,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderMessage)
 class OrderMessageAdmin(admin.ModelAdmin):
-    list_display   = ['order', 'sender', 'created_at', '_preview']
-    list_filter    = ['created_at']
+    list_display   = ['order', 'sender', 'is_read', 'created_at', '_preview']
+    list_filter    = ['is_read', 'created_at']
     search_fields  = ['order__order_number', 'sender__email', 'message']
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at', 'is_read']
     inlines        = [OrderMessageAttachmentInline]
 
     @admin.display(description='پیام')

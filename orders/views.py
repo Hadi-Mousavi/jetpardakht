@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
 
 from kyc.models import KYCProfile
@@ -12,6 +13,7 @@ from .models import (
     Order, OrderAttachment, OrderMessage,
     OrderMessageAttachment, SubCategory,
 )
+from .unread import mark_order_admin_messages_read, orders_with_unread_counts
 from .utils import validate_upload
 
 
@@ -24,14 +26,124 @@ def _kyc_profile(user):
         return None
 
 
+_STATUS_TIMELINE = {
+    Order.STATUS_UNDER_REVIEW: (
+        'سفارش در حال بررسی قرار گرفت', 'bi-search', '🔍',
+    ),
+    Order.STATUS_WAITING_PAYMENT: (
+        'سفارش در انتظار پرداخت قرار گرفت', 'bi-credit-card', '💳',
+    ),
+    Order.STATUS_IN_PROGRESS: (
+        'سفارش در حال انجام قرار گرفت', 'bi-rocket-takeoff-fill', '🚀',
+    ),
+    Order.STATUS_COMPLETED: (
+        'سفارش تکمیل شد', 'bi-check-circle-fill', '✅',
+    ),
+    Order.STATUS_REJECTED: (
+        'سفارش رد شد', 'bi-x-circle-fill', '❌',
+    ),
+    Order.STATUS_CANCELLED: (
+        'سفارش لغو شد', 'bi-slash-circle', '🚫',
+    ),
+}
+
+
+def _build_order_timeline(order):
+    """
+    Build a chronological activity feed from existing order-related data.
+    No audit/history model — events are inferred from timestamps on related rows.
+    """
+    events = []
+
+    events.append({
+        'title': 'سفارش ثبت شد',
+        'emoji': '📦',
+        'icon': 'bi-box-seam-fill',
+        'timestamp': order.created_at,
+        'sort_order': 10,
+    })
+
+    if order.status in _STATUS_TIMELINE:
+        title, icon, emoji = _STATUS_TIMELINE[order.status]
+        events.append({
+            'title': title,
+            'emoji': emoji,
+            'icon': icon,
+            'timestamp': order.updated_at,
+            'sort_order': 20,
+        })
+
+    if order.assigned_admin_id:
+        events.append({
+            'title': 'مسئول سفارش تعیین شد',
+            'emoji': '👨‍💼',
+            'icon': 'bi-person-badge-fill',
+            'timestamp': order.updated_at,
+            'sort_order': 30,
+        })
+
+    if (
+        order.updated_at > order.created_at
+        and order.status == Order.STATUS_SUBMITTED
+    ):
+        events.append({
+            'title': 'اطلاعات سفارش ویرایش شد',
+            'emoji': '📝',
+            'icon': 'bi-pencil-square',
+            'timestamp': order.updated_at,
+            'sort_order': 40,
+        })
+
+    for msg in order.messages.all():
+        events.append({
+            'title': 'پیام جدید ثبت شد',
+            'emoji': '💬',
+            'icon': 'bi-chat-dots-fill',
+            'timestamp': msg.created_at,
+            'sort_order': 50,
+        })
+        for att in msg.attachments.all():
+            events.append({
+                'title': 'فایل جدید بارگذاری شد',
+                'emoji': '📎',
+                'icon': 'bi-paperclip',
+                'timestamp': att.uploaded_at,
+                'sort_order': 55,
+            })
+
+    for att in order.attachments.all():
+        events.append({
+            'title': 'فایل جدید بارگذاری شد',
+            'emoji': '📎',
+            'icon': 'bi-paperclip',
+            'timestamp': att.created_at,
+            'sort_order': 60,
+        })
+
+    events.sort(
+        key=lambda item: (
+            item['timestamp'] or timezone.now(),
+            item['sort_order'],
+        ),
+        reverse=True,
+    )
+    return events
+
+
 def _render_order_detail(request, order, msg_form=None, attach_form=None):
     """Shared render helper — keeps queryset logic in one place."""
-    order_msgs  = order.messages.select_related('sender').prefetch_related('attachments')
+    order_msgs = list(
+        order.messages.select_related('sender').prefetch_related('attachments')
+    )
+    if not request.user.is_staff:
+        mark_order_admin_messages_read(order)
     attachments = order.attachments.select_related('uploaded_by')
+    timeline    = _build_order_timeline(order)
     return render(request, 'orders/order_detail.html', {
         'order':        order,
         'order_msgs':   order_msgs,
         'attachments':  attachments,
+        'timeline':     timeline,
         'msg_form':     msg_form if msg_form is not None else MessageForm(),
         'attach_form':  attach_form if attach_form is not None else AttachmentForm(),
     })
@@ -41,9 +153,8 @@ def _render_order_detail(request, order, msg_form=None, attach_form=None):
 
 @login_required
 def order_list(request):
-    orders      = (
-        Order.objects
-        .filter(user=request.user)
+    orders = (
+        orders_with_unread_counts(request.user)
         .select_related('category', 'subcategory')
     )
     kyc         = _kyc_profile(request.user)

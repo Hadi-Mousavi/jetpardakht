@@ -29,6 +29,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv(
 # ---------------------------------------------------------------------------
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -68,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'orders.context_processors.unread_messages',
             ],
         },
     },
@@ -117,13 +120,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 # ---------------------------------------------------------------------------
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
+
+# Only Persian is enabled so LocaleMiddleware cannot fall back to English
+# via the browser Accept-Language header (which overrides LANGUAGE_CODE).
+LANGUAGES = [
+    ('fa', 'فارسی'),
+]
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_TZ = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # ---------------------------------------------------------------------------
 # Static and media files
@@ -194,5 +207,71 @@ RATELIMIT_VIEW = 'config.ratelimit_handlers.ratelimited_error'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
+
+# ---------------------------------------------------------------------------
+# Jazzmin (Django Admin UI)
+# ---------------------------------------------------------------------------
+# Branding, Persian locale (fa), RTL layout, and premium theme CSS.
+# Dashboard uses Jazzmin defaults (no custom cards).
+
+JAZZMIN_SETTINGS = {
+    # Site branding
+    'site_title': 'JetPay24 Admin',
+    'site_header': 'JetPay24',
+    'site_brand': 'JetPay24',
+    'welcome_sign': 'به پنل مدیریت جت‌پی‌۲۴ خوش آمدید',
+    'copyright': 'JetPay24',
+
+    # Sidebar navigation
+    'show_sidebar': True,
+    'navigation_expanded': True,
+
+    # App order in sidebar
+    'order_with_respect_to': ['orders', 'kyc', 'accounts', 'auth'],
+
+    # Model icons (Font Awesome 5)
+    'icons': {
+        'auth': 'fas fa-users-cog',
+        'auth.group': 'fas fa-users',
+        'accounts': 'fas fa-user-circle',
+        'accounts.user': 'fas fa-user',
+        'accounts.otpcode': 'fas fa-sms',
+        'orders': 'fas fa-shopping-cart',
+        'orders.category': 'fas fa-folder',
+        'orders.subcategory': 'fas fa-folder-open',
+        'orders.order': 'fas fa-receipt',
+        'orders.ordermessage': 'fas fa-comments',
+        'kyc': 'fas fa-id-card',
+        'kyc.kycprofile': 'fas fa-id-badge',
+        'kyc.kycsitesettings': 'fas fa-cogs',
+    },
+    'default_icon_parents': 'fas fa-chevron-circle-right',
+    'default_icon_children': 'fas fa-circle',
+
+    # Keep default dashboard; no custom links or UI builder
+    'show_ui_builder': False,
+    'use_google_fonts_cdn': False,
+    'custom_css': 'admin/css/jazzmin-rtl.css',
+    'custom_js': None,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'theme': 'default',
+    'accent': 'accent-primary',
+    'navbar': 'navbar-white navbar-light',
+    'sidebar': 'sidebar-light-primary',
+    'navbar_fixed': True,
+    'sidebar_fixed': True,
+    'footer_fixed': False,
+    'layout_boxed': False,
+    'button_classes': {
+        'primary': 'btn-primary',
+        'secondary': 'btn-secondary',
+        'info': 'btn-info',
+        'warning': 'btn-warning',
+        'danger': 'btn-danger',
+        'success': 'btn-success',
     },
 }

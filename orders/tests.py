@@ -1141,6 +1141,148 @@ class RegressionTests(TestCase):
 
 
 # ===========================================================================
+# Order timeline
+# ===========================================================================
+
+class OrderTimelineTests(TestCase):
+    """Timeline generation from existing order data (no history model)."""
+
+    def setUp(self):
+        self.cat, self.sub = _make_category()
+        self.user = _make_user('timeline@test.com', kyc_approved=True)
+
+    def test_new_order_includes_created_event(self):
+        from .views import _build_order_timeline
+
+        order = _make_order(self.user, self.cat, self.sub)
+        titles = [e['title'] for e in _build_order_timeline(order)]
+        self.assertIn('سفارش ثبت شد', titles)
+
+    def test_status_change_event_for_in_progress_order(self):
+        from .views import _build_order_timeline
+
+        order = _make_order(self.user, self.cat, self.sub)
+        order.status = Order.STATUS_IN_PROGRESS
+        order.save(update_fields=['status'])
+        titles = [e['title'] for e in _build_order_timeline(order)]
+        self.assertIn('سفارش در حال انجام قرار گرفت', titles)
+
+    def test_timeline_sorted_newest_first(self):
+        from .views import _build_order_timeline
+
+        order = _make_order(self.user, self.cat, self.sub)
+        OrderMessage.objects.create(
+            order=order, sender=self.user, message='سلام',
+        )
+        timeline = _build_order_timeline(order)
+        timestamps = [e['timestamp'] for e in timeline]
+        self.assertEqual(timestamps, sorted(timestamps, reverse=True))
+
+    def test_order_detail_renders_timeline_section(self):
+        order = _make_order(self.user, self.cat, self.sub)
+        client = Client()
+        client.force_login(self.user)
+        resp = client.get(reverse('order_detail', args=[order.pk]))
+        self.assertContains(resp, 'تاریخچه سفارش')
+        self.assertContains(resp, 'سفارش ثبت شد')
+
+    def test_attachment_and_message_events(self):
+        from .views import _build_order_timeline
+
+        order = _make_order(self.user, self.cat, self.sub)
+        OrderAttachment.objects.create(
+            order=order,
+            file=ContentFile(b'%PDF', name='doc.pdf'),
+            uploaded_by=self.user,
+        )
+        OrderMessage.objects.create(
+            order=order, sender=self.user, message='پیام تست',
+        )
+        titles = [e['title'] for e in _build_order_timeline(order)]
+        self.assertIn('فایل جدید بارگذاری شد', titles)
+        self.assertIn('پیام جدید ثبت شد', titles)
+
+
+# ===========================================================================
+# Unread admin messages
+# ===========================================================================
+
+class OrderUnreadMessageTests(TestCase):
+    """Read/unread state for staff vs customer order messages."""
+
+    def setUp(self):
+        self.cat, self.sub = _make_category()
+        self.customer = _make_user('customer@test.com', kyc_approved=True)
+        self.staff = _make_user('staff@test.com', is_staff=True)
+        self.order = _make_order(self.customer, self.cat, self.sub)
+        self.client = Client()
+        self.client.force_login(self.customer)
+
+    def test_staff_message_defaults_to_unread(self):
+        msg = OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='پاسخ تیم',
+        )
+        self.assertFalse(msg.is_read)
+
+    def test_customer_message_saved_as_read(self):
+        msg = OrderMessage.objects.create(
+            order=self.order, sender=self.customer, message='سوال من',
+        )
+        self.assertTrue(msg.is_read)
+
+    def test_viewing_order_detail_marks_staff_messages_read(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='پیام اول',
+        )
+        self.client.get(reverse('order_detail', args=[self.order.pk]))
+        self.assertFalse(
+            OrderMessage.objects.filter(order=self.order, is_read=False).exists()
+        )
+
+    def test_unread_badge_visible_before_mark_read(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='پیام خوانده‌نشده',
+        )
+        resp = self.client.get(reverse('order_detail', args=[self.order.pk]))
+        self.assertContains(resp, 'جدید')
+
+    def test_order_list_shows_unread_count(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='یک',
+        )
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='دو',
+        )
+        resp = self.client.get(reverse('order_list'))
+        self.assertContains(resp, '💬 2 پیام جدید')
+
+    def test_dashboard_shows_unread_notification(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='سلام',
+        )
+        resp = self.client.get(reverse('dashboard'))
+        self.assertContains(resp, '📨')
+        self.assertContains(resp, '1 پیام خوانده‌نشده دارید')
+
+    def test_sidebar_shows_unread_count(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='سلام',
+        )
+        resp = self.client.get(reverse('order_list'))
+        self.assertContains(resp, 'سفارش‌های من')
+        self.assertContains(resp, '(1)')
+
+    def test_staff_user_has_zero_unread_in_context(self):
+        OrderMessage.objects.create(
+            order=self.order, sender=self.staff, message='staff only',
+        )
+        staff_client = Client()
+        staff_client.force_login(self.staff)
+        resp = staff_client.get(reverse('order_list'))
+        self.assertNotContains(resp, '(1)')
+
+
+# ===========================================================================
 # Rate limiting (R1)
 # ===========================================================================
 

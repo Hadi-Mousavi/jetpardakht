@@ -77,8 +77,8 @@ class KYCProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True,     verbose_name='آخرین ویرایش')
 
     class Meta:
-        verbose_name = 'پروفایل KYC'
-        verbose_name_plural = 'پروفایل‌های KYC'
+        verbose_name = 'پروفایل احراز هویت'
+        verbose_name_plural = 'پروفایل‌های احراز هویت'
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['status', 'created_at'], name='kyc_status_created_idx'),
@@ -126,11 +126,11 @@ class KYCSiteSettings(models.Model):
     )
 
     class Meta:
-        verbose_name = 'تنظیمات KYC'
-        verbose_name_plural = 'تنظیمات KYC'
+        verbose_name = 'تنظیمات احراز هویت'
+        verbose_name_plural = 'تنظیمات احراز هویت'
 
     def __str__(self):
-        return 'تنظیمات KYC'
+        return 'تنظیمات احراز هویت'
 
     @classmethod
     def get(cls):

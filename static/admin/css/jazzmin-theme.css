@@ -1,0 +1,732 @@
+/*
+ * JetPay24 Admin — premium Persian RTL theme (Jazzmin / AdminLTE 3).
+ * Loaded from templates/admin/base_site.html after jazzmin-rtl.css.
+ */
+
+:root {
+    --jp-bg: #f8fafc;
+    --jp-card: #ffffff;
+    --jp-border: #e5e7eb;
+    --jp-primary: #3b82f6;
+    --jp-primary-soft: rgba(59, 130, 246, 0.1);
+    --jp-text: #1e293b;
+    --jp-text-muted: #64748b;
+    --jp-save: #22c55e;
+    --jp-save-hover: #16a34a;
+    --jp-delete: #ef4444;
+    --jp-delete-hover: #dc2626;
+    --jp-secondary: #3b82f6;
+    --jp-secondary-hover: #2563eb;
+    --jp-sidebar-bg: #ffffff;
+    --jp-sidebar-text: #334155;
+    --jp-sidebar-muted: #94a3b8;
+    --jp-radius: 12px;
+    --jp-radius-input: 10px;
+    --jp-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --jp-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --jp-transition: 0.2s ease;
+}
+
+/* ── Typography & base ───────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl {
+    font-family: "Vazirmatn", "Segoe UI", Tahoma, sans-serif;
+    background: var(--jp-bg) !important;
+    color: var(--jp-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl a {
+    color: var(--jp-primary);
+    transition: color var(--jp-transition);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl a:hover {
+    color: var(--jp-secondary-hover);
+}
+
+/* ── Top navbar ────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-header.navbar,
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-navbar {
+    background: var(--jp-card) !important;
+    border-bottom: 1px solid var(--jp-border);
+    box-shadow: var(--jp-shadow);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-header .nav-link {
+    color: var(--jp-text-muted) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-header .nav-link:hover {
+    color: var(--jp-primary) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .dropdown-menu {
+    border: 1px solid var(--jp-border);
+    border-radius: var(--jp-radius);
+    box-shadow: var(--jp-shadow-md);
+    padding: 0.35rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .dropdown-item {
+    border-radius: 8px;
+    text-align: right;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .dropdown-item:hover {
+    background: var(--jp-primary-soft);
+    color: var(--jp-primary);
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-sidebar,
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-sidebar {
+    background: var(--jp-sidebar-bg) !important;
+    border-left: 1px solid var(--jp-border);
+    box-shadow: -4px 0 24px rgba(15, 23, 42, 0.04);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .brand-link,
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-logo {
+    background: var(--jp-card) !important;
+    border-bottom: 1px solid var(--jp-border) !important;
+    color: var(--jp-text) !important;
+    font-weight: 600;
+    padding: 1rem 1.1rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .brand-link .brand-text {
+    color: var(--jp-text) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .user-panel {
+    border-bottom: 1px solid var(--jp-border) !important;
+    color: var(--jp-sidebar-text);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .user-panel .info a,
+html[dir="rtl"] body.jetpay-admin-rtl .user-panel .info span {
+    color: var(--jp-text) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-header {
+    color: var(--jp-sidebar-muted) !important;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 1rem 1rem 0.45rem;
+    margin-top: 0.35rem;
+    border-top: 1px solid var(--jp-border);
+    background: transparent !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar > .nav-item > .nav-link:first-child,
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-item:first-child .nav-header {
+    border-top: none;
+    margin-top: 0;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link {
+    color: var(--jp-sidebar-text) !important;
+    border-radius: 10px;
+    margin: 0.15rem 0.65rem;
+    padding: 0.55rem 0.85rem;
+    transition: background var(--jp-transition), color var(--jp-transition), box-shadow var(--jp-transition);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link .nav-icon {
+    color: var(--jp-sidebar-muted) !important;
+    width: 1.35rem;
+    transition: color var(--jp-transition);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link:hover {
+    background: var(--jp-primary-soft) !important;
+    color: var(--jp-primary) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link:hover .nav-icon {
+    color: var(--jp-primary) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link.active {
+    background: linear-gradient(270deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+    color: var(--jp-primary) !important;
+    box-shadow: inset 3px 0 0 var(--jp-primary);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-sidebar .nav-link.active .nav-icon {
+    color: var(--jp-primary) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .nav-treeview > .nav-item > .nav-link {
+    padding-right: 2.2rem;
+    font-size: 0.92rem;
+}
+
+/* ── Content shell ─────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .content-wrapper {
+    background: var(--jp-bg) !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content-wrapper > .content {
+    padding: 1.25rem 1.5rem 2rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content.border-bottom {
+    background: var(--jp-card);
+    border-bottom: 1px solid var(--jp-border) !important;
+    margin-bottom: 1.25rem !important;
+    padding: 1rem 0;
+    overflow: hidden;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content.border-bottom .row {
+    margin-right: 0;
+    margin-left: 0;
+    align-items: center;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content.border-bottom .h4.border-right,
+html[dir="rtl"] body.jetpay-admin-rtl .content.border-bottom h1.h4 {
+    border-right: 0 !important;
+    border-left: 1px solid var(--jp-border) !important;
+    padding-right: 0 !important;
+    padding-left: 1rem !important;
+    margin-right: 0 !important;
+    margin-left: 1rem !important;
+    white-space: normal;
+    word-break: break-word;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content.border-bottom .breadcrumb {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .content .h4,
+html[dir="rtl"] body.jetpay-admin-rtl .content h1.h4 {
+    color: var(--jp-text);
+    font-weight: 700;
+    font-size: 1.35rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .breadcrumb.jp-breadcrumb,
+html[dir="rtl"] body.jetpay-admin-rtl .breadcrumb {
+    background: transparent;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .breadcrumb-item,
+html[dir="rtl"] body.jetpay-admin-rtl .breadcrumb-item a {
+    color: var(--jp-text-muted);
+    font-size: 0.9rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .breadcrumb-item.active {
+    color: var(--jp-text);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .main-footer {
+    background: var(--jp-card) !important;
+    border-top: 1px solid var(--jp-border);
+    color: var(--jp-text-muted);
+}
+
+/* ── Cards ─────────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .card {
+    background: var(--jp-card);
+    border: 1px solid var(--jp-border);
+    border-radius: var(--jp-radius);
+    box-shadow: var(--jp-shadow);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .card-header {
+    background: var(--jp-card);
+    border-bottom: 1px solid var(--jp-border);
+    padding: 1rem 1.25rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .card-title,
+html[dir="rtl"] body.jetpay-admin-rtl .card-header h5,
+html[dir="rtl"] body.jetpay-admin-rtl .card-header h4 {
+    color: var(--jp-text);
+    font-weight: 700;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .card-body {
+    padding: 1.25rem;
+}
+
+/* ── Dashboard ───────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-card {
+    transition: box-shadow var(--jp-transition), transform var(--jp-transition);
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-card:hover {
+    box-shadow: var(--jp-shadow-md);
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-table td {
+    border-top: 1px solid var(--jp-border);
+    vertical-align: middle;
+    padding: 0.85rem 0.35rem;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-table td a {
+    color: var(--jp-text);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-table td a:hover {
+    color: var(--jp-primary);
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: flex-start;
+    float: none !important;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-dashboard-grid {
+    margin-right: 0;
+    margin-left: 0;
+    width: 100%;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-recent-actions .card-body {
+    padding-top: 0.75rem;
+}
+
+html[dir="rtl"] body.jp-dashboard .jp-timeline::before {
+    background: var(--jp-border);
+}
+
+html[dir="rtl"] body.jp-dashboard .timeline-item {
+    box-shadow: none;
+    border: 1px solid var(--jp-border);
+    border-radius: 10px;
+    background: var(--jp-bg);
+}
+
+html[dir="rtl"] body.jp-dashboard .timeline-header {
+    font-size: 0.92rem;
+    color: var(--jp-text);
+}
+
+html[dir="rtl"] body.jp-dashboard .timeline-item .time {
+    color: var(--jp-text-muted);
+    font-size: 0.78rem;
+}
+
+/* ── Action buttons card ───────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-actions,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-panel {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    align-items: stretch;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-column {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card {
+    border-radius: var(--jp-radius);
+    box-shadow: var(--jp-shadow-md);
+    border: 1px solid var(--jp-border);
+    position: sticky;
+    top: 5.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card .card-body {
+    padding: 1rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn {
+    border: none;
+    border-radius: var(--jp-radius);
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.72rem 1rem;
+    box-shadow: var(--jp-shadow);
+    transition: transform var(--jp-transition), box-shadow var(--jp-transition), background var(--jp-transition);
+    width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn:hover,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-save {
+    background: var(--jp-save) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-save:hover {
+    background: var(--jp-save-hover) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-delete {
+    background: var(--jp-delete) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-delete:hover {
+    background: var(--jp-delete-hover) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-secondary {
+    background: var(--jp-secondary) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-btn-secondary:hover {
+    background: var(--jp-secondary-hover) !important;
+    color: #fff !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card .form-group:last-child {
+    margin-bottom: 0 !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card .form-group {
+    margin-bottom: 0.75rem !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-object-tools {
+    margin-top: 0;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-object-tools .btn,
+html[dir="rtl"] body.jetpay-admin-rtl .jp-object-tools a {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    border-radius: var(--jp-radius);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .object-tools {
+    padding: 0;
+    margin: 0;
+    float: none;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .object-tools .btn,
+html[dir="rtl"] body.jetpay-admin-rtl .object-tools a {
+    border-radius: var(--jp-radius);
+}
+
+/* ── Horizontal tabs ───────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-tabs {
+    border-bottom: 1px solid var(--jp-border);
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-tabs .nav-link {
+    color: var(--jp-text-muted);
+    border: none;
+    border-radius: 10px 10px 0 0;
+    padding: 0.75rem 1.1rem;
+    font-weight: 600;
+    transition: background var(--jp-transition), color var(--jp-transition);
+    margin-bottom: -1px;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-tabs .nav-link:hover {
+    color: var(--jp-primary);
+    background: var(--jp-primary-soft);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #jazzy-tabs .nav-link.active {
+    color: var(--jp-primary) !important;
+    background: var(--jp-primary-soft) !important;
+    border-bottom: 3px solid var(--jp-primary);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .tab-content {
+    padding-top: 1rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .tab-content > .tab-pane > .card {
+    box-shadow: none;
+    border: 1px solid var(--jp-border);
+}
+
+/* ── Forms ───────────────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .form-group {
+    margin-bottom: 1.35rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl label,
+html[dir="rtl"] body.jetpay-admin-rtl .aligned label {
+    color: var(--jp-text);
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 0.45rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl input.form-control,
+html[dir="rtl"] body.jetpay-admin-rtl textarea.form-control,
+html[dir="rtl"] body.jetpay-admin-rtl select.form-control,
+html[dir="rtl"] body.jetpay-admin-rtl .vTextField,
+html[dir="rtl"] body.jetpay-admin-rtl .vLargeTextField,
+html[dir="rtl"] body.jetpay-admin-rtl input[type="text"],
+html[dir="rtl"] body.jetpay-admin-rtl input[type="password"],
+html[dir="rtl"] body.jetpay-admin-rtl input[type="email"],
+html[dir="rtl"] body.jetpay-admin-rtl input[type="number"],
+html[dir="rtl"] body.jetpay-admin-rtl input[type="url"],
+html[dir="rtl"] body.jetpay-admin-rtl textarea,
+html[dir="rtl"] body.jetpay-admin-rtl select {
+    border: 1px solid var(--jp-border);
+    border-radius: var(--jp-radius-input);
+    background: var(--jp-card);
+    color: var(--jp-text);
+    padding: 0.62rem 0.85rem;
+    box-shadow: none;
+    transition: border-color var(--jp-transition), box-shadow var(--jp-transition);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl input.form-control:focus,
+html[dir="rtl"] body.jetpay-admin-rtl textarea.form-control:focus,
+html[dir="rtl"] body.jetpay-admin-rtl select.form-control:focus,
+html[dir="rtl"] body.jetpay-admin-rtl .vTextField:focus,
+html[dir="rtl"] body.jetpay-admin-rtl .vLargeTextField:focus {
+    border-color: var(--jp-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .help-block,
+html[dir="rtl"] body.jetpay-admin-rtl p.help,
+html[dir="rtl"] body.jetpay-admin-rtl .description {
+    color: var(--jp-text-muted);
+    font-size: 0.85rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .select2-container--default .select2-selection--single {
+    border: 1px solid var(--jp-border);
+    border-radius: var(--jp-radius-input);
+    min-height: 42px;
+    padding-top: 4px;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: var(--jp-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .jp-form-card .card-body {
+    overflow-x: hidden;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .select2-container {
+    max-width: 100% !important;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .inline-group h2,
+html[dir="rtl"] body.jetpay-admin-rtl .inline-related h3 {
+    color: var(--jp-text);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .container-fluid {
+    max-width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* ── Tables / changelist ───────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl #result_list,
+html[dir="rtl"] body.jetpay-admin-rtl .table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #result_list thead th,
+html[dir="rtl"] body.jetpay-admin-rtl .table thead th {
+    background: var(--jp-bg);
+    color: var(--jp-text-muted);
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--jp-border);
+    border-top: none;
+    white-space: normal;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #result_list tbody td,
+html[dir="rtl"] body.jetpay-admin-rtl .table tbody td {
+    border-top: 1px solid var(--jp-border);
+    color: var(--jp-text);
+    vertical-align: middle;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #result_list tbody tr:hover,
+html[dir="rtl"] body.jetpay-admin-rtl .table-hover tbody tr:hover {
+    background: var(--jp-primary-soft);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .table.text-nowrap,
+html[dir="rtl"] body.jetpay-admin-rtl .table.text-nowrap td,
+html[dir="rtl"] body.jetpay-admin-rtl .table.text-nowrap th {
+    white-space: normal;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .results {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #changelist .card-body {
+    overflow-x: visible;
+    max-width: 100%;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #changelist-filter {
+    background: var(--jp-card);
+    border: 1px solid var(--jp-border);
+    border-radius: var(--jp-radius);
+    box-shadow: var(--jp-shadow);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl #changelist-filter h2,
+html[dir="rtl"] body.jetpay-admin-rtl #changelist-filter h3 {
+    color: var(--jp-text);
+    font-size: 0.95rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .paginator {
+    border-radius: var(--jp-radius);
+    background: var(--jp-card);
+    border: 1px solid var(--jp-border);
+    padding: 0.65rem 1rem;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .paginator a,
+html[dir="rtl"] body.jetpay-admin-rtl .paginator span {
+    border-radius: 8px;
+}
+
+/* ── Alerts & login ────────────────────────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .alert {
+    border-radius: var(--jp-radius);
+    border: 1px solid transparent;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .alert-success {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.25);
+    color: #166534;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.22);
+    color: #991b1b;
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .login-box,
+html[dir="rtl"] body.jetpay-admin-rtl .login-card-body,
+html[dir="rtl"] body.jetpay-admin-rtl .register-box {
+    border-radius: var(--jp-radius);
+    box-shadow: var(--jp-shadow-md);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .login-card-body,
+html[dir="rtl"] body.jetpay-admin-rtl .card-primary.card-outline {
+    border: 1px solid var(--jp-border);
+}
+
+/* ── Legacy Bootstrap button cleanup ───────────────────────────────────────── */
+
+html[dir="rtl"] body.jetpay-admin-rtl .btn-primary {
+    background: var(--jp-primary);
+    border-color: var(--jp-primary);
+    border-radius: var(--jp-radius-input);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .btn-success {
+    background: var(--jp-save);
+    border-color: var(--jp-save);
+    border-radius: var(--jp-radius-input);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .btn-danger {
+    background: var(--jp-delete);
+    border-color: var(--jp-delete);
+    border-radius: var(--jp-radius-input);
+}
+
+html[dir="rtl"] body.jetpay-admin-rtl .btn-info,
+html[dir="rtl"] body.jetpay-admin-rtl .btn-secondary {
+    background: var(--jp-secondary);
+    border-color: var(--jp-secondary);
+    border-radius: var(--jp-radius-input);
+}
+
+/* ── Desktop polish ──────────────────────────────────────────────────────────── */
+
+@media (min-width: 1280px) {
+    html[dir="rtl"] body.jetpay-admin-rtl .change-form .col-lg-9 > .card {
+        min-height: 420px;
+    }
+
+    html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card {
+        top: 6rem;
+    }
+
+    html[dir="rtl"] body.jp-dashboard .jp-dashboard-main,
+    html[dir="rtl"] body.jp-dashboard .jp-dashboard-sidebar {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    html[dir="rtl"] body.jetpay-admin-rtl .jp-actions-card {
+        position: static;
+        margin-top: 1rem;
+    }
+}
