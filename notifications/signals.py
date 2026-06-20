@@ -26,12 +26,21 @@ def _cache_order_status(sender, instance, **kwargs):
 @receiver(post_save, sender=Order)
 def _notify_order_events(sender, instance, created, **kwargs):
     if created:
-        create_notification(
-            user=instance.user,
-            title='سفارش ثبت شد',
-            message=f'سفارش {instance.order_number} با موفقیت ثبت شد.',
-            notification_type=Notification.TYPE_ORDER_CREATED,
-        )
+        # Service orders get a dedicated notification type.
+        if getattr(instance, 'service_id', None):
+            create_notification(
+                user=instance.user,
+                title='سفارش جدید شما ثبت شد 🛍️',
+                message=f'سفارش جدید شما ثبت شد.',
+                notification_type=Notification.TYPE_SERVICE_ORDER_CREATED,
+            )
+        else:
+            create_notification(
+                user=instance.user,
+                title='سفارش ثبت شد',
+                message=f'سفارش {instance.order_number} با موفقیت ثبت شد.',
+                notification_type=Notification.TYPE_ORDER_CREATED,
+            )
         return
 
     previous = getattr(instance, '_previous_status', None)

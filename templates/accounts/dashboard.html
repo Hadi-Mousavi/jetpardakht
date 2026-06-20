@@ -727,12 +727,12 @@
                 <div class="quick-actions-title">دسترسی سریع</div>
                 <div class="row g-3">
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <a href="{% url 'order_create' %}" class="quick-action-card">
+                        <a href="{% url 'service_catalog' %}" class="quick-action-card">
                             <span class="quick-action-icon create">
-                                <i class="bi bi-plus-circle"></i>
+                                <i class="bi bi-grid-fill"></i>
                             </span>
                             <div class="quick-action-title">ثبت سفارش جدید</div>
-                            <p class="quick-action-desc">ثبت درخواست پرداخت یا خدمات جدید در چند مرحله ساده.</p>
+                            <p class="quick-action-desc">مشاهده سرویس‌های موجود و ثبت سفارش از طریق کاتالوگ خدمات.</p>
                         </a>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
@@ -1062,8 +1062,8 @@
                     <div class="recent-orders-empty">
                         <i class="bi bi-inbox"></i>
                         <p class="mb-3">هنوز سفارشی ثبت نشده است.</p>
-                        <a href="{% url 'order_create' %}" class="btn btn-jp-primary btn-sm px-4">
-                            <i class="bi bi-plus-lg ms-1"></i>ثبت سفارش جدید
+                        <a href="{% url 'service_catalog' %}" class="btn btn-jp-primary btn-sm px-4">
+                            <i class="bi bi-grid-fill ms-1"></i>ثبت سفارش جدید
                         </a>
                     </div>
                 {% endif %}

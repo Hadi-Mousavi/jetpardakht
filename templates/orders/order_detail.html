@@ -346,6 +346,30 @@
             {% endif %}
         </div>
 
+        <!-- ── Service dynamic field values ─────────────────────── -->
+        {% if field_values %}
+        <div class="jp-card">
+            <div class="card-title">اطلاعات سفارش</div>
+            {% for fv in field_values %}
+            <div class="info-row">
+                <i class="bi bi-tag"></i>
+                <span class="info-label">{{ fv.service_field.label }}</span>
+                <span class="info-value">
+                    {% if fv.is_file %}
+                    <a href="{% url 'field_value_download' pk=fv.pk %}"
+                       class="text-decoration-none"
+                       style="color:var(--jp-primary-medium);font-weight:600;">
+                        <i class="bi bi-download me-1"></i>{{ fv.display_value }}
+                    </a>
+                    {% else %}
+                    {{ fv.value_text|default:'—' }}
+                    {% endif %}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- ── Payment section ────────────────────────────────────── -->
         {% if order.status == 'waiting_customer_payment' or payments %}
         <div class="jp-card">

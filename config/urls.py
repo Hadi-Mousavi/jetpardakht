@@ -33,6 +33,7 @@ urlpatterns = [
     path('dashboard/orders/', include('orders.urls')),
     path('dashboard/notifications/', include('notifications.urls')),
     path('dashboard/payments/', include('payments.urls')),
+    path('dashboard/services/', include('services.urls')),
     path('tracking/', order_tracking, name='order_tracking'),
 ]
 

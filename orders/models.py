@@ -192,6 +192,13 @@ class Order(models.Model):
         default=STATUS_SUBMITTED, db_index=True,
         verbose_name='وضعیت',
     )
+    service           = models.ForeignKey(
+        'services.Service',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='orders',
+        verbose_name='سرویس',
+    )
     admin_note        = models.TextField(blank=True, verbose_name='یادداشت ادمین')
     assigned_admin    = models.ForeignKey(
         settings.AUTH_USER_MODEL,

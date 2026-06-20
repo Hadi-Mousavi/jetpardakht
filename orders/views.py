@@ -234,6 +234,17 @@ def _render_order_detail(request, order, msg_form=None, attach_form=None):
     latest_history  = status_history[0] if status_history else None
     action_required = order.status == Order.STATUS_WAITING_CUSTOMER
 
+    # Dynamic service field values (only present for service-catalog orders)
+    if order.service_id:
+        from services.models import OrderFieldValue
+        field_values = list(
+            order.field_values
+            .select_related('service_field')
+            .order_by('service_field__sort_order', 'service_field__id')
+        )
+    else:
+        field_values = []
+
     return render(request, 'orders/order_detail.html', {
         'order':              order,
         'order_msgs':         order_msgs,
@@ -250,6 +261,8 @@ def _render_order_detail(request, order, msg_form=None, attach_form=None):
         'status_history':     status_history,
         'latest_history':     latest_history,
         'action_required':    action_required,
+        # service catalog
+        'field_values':       field_values,
     })
 
 

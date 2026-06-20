@@ -19,6 +19,7 @@ class Notification(models.Model):
     TYPE_ORDER_REACTIVATED      = 'ORDER_REACTIVATED'
     TYPE_PAYMENT_APPROVED       = 'PAYMENT_APPROVED'
     TYPE_PAYMENT_REJECTED       = 'PAYMENT_REJECTED'
+    TYPE_SERVICE_ORDER_CREATED  = 'SERVICE_ORDER_CREATED'
 
     TYPE_CHOICES = [
         (TYPE_ORDER_CREATED,          'ثبت سفارش'),
@@ -36,6 +37,7 @@ class Notification(models.Model):
         (TYPE_KYC_NEEDS_CORRECTION,   'درخواست اصلاح احراز هویت'),
         (TYPE_PAYMENT_APPROVED,       'تأیید پرداخت'),
         (TYPE_PAYMENT_REJECTED,       'رد پرداخت'),
+        (TYPE_SERVICE_ORDER_CREATED,  'ثبت سفارش سرویس'),
     ]
 
     DISPLAY_TYPES = {
@@ -54,6 +56,7 @@ class Notification(models.Model):
         TYPE_KYC_NEEDS_CORRECTION:   'warning',
         TYPE_PAYMENT_APPROVED:       'success',
         TYPE_PAYMENT_REJECTED:       'danger',
+        TYPE_SERVICE_ORDER_CREATED:  'success',
     }
 
     DISPLAY_ICONS = {
@@ -72,6 +75,7 @@ class Notification(models.Model):
         TYPE_KYC_NEEDS_CORRECTION:   'bi-pencil-square',
         TYPE_PAYMENT_APPROVED:       'bi-credit-card-2-front-fill',
         TYPE_PAYMENT_REJECTED:       'bi-credit-card-fill',
+        TYPE_SERVICE_ORDER_CREATED:  'bi-bag-check-fill',
     }
 
     DISPLAY_EMOJIS = {
@@ -90,6 +94,7 @@ class Notification(models.Model):
         TYPE_KYC_NEEDS_CORRECTION:   '✏️',
         TYPE_PAYMENT_APPROVED:       '💰',
         TYPE_PAYMENT_REJECTED:       '❌',
+        TYPE_SERVICE_ORDER_CREATED:  '🛍️',
     }
 
     user = models.ForeignKey(

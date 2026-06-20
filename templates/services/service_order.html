@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت سفارش: {{ service.name }} — جت‌پی‌۲۴</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --jp-primary-dark:    #1F2A60;
+            --jp-primary-medium:  #3C5A8C;
+            --jp-primary-light:   #3D95BE;
+            --jp-primary-lighter: #67B0D4;
+            --jp-gradient:        linear-gradient(135deg, var(--jp-primary-dark) 0%, var(--jp-primary-lighter) 100%);
+            --jp-border-radius-lg: 1.25rem;
+            --jp-border-radius-md: 1rem;
+            --jp-border-radius-sm: 0.6rem;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: #f0f4f8;
+            color: #1a2340;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: var(--jp-gradient);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            color: white;
+        }
+        .sidebar-brand { font-size: 1.5rem; font-weight: 800; }
+        .sidebar-brand span { color: var(--jp-primary-lighter); }
+        .nav-link-custom {
+            display: flex; align-items: center; gap: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            padding: 0.65rem 1rem;
+            border-radius: var(--jp-border-radius-sm);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-link-custom:hover { background: rgba(255,255,255,0.15); color: white; }
+        .nav-link-custom i { font-size: 1.15rem; }
+
+        /* ── Page card ───────────────────────────────────────────── */
+        .form-card {
+            background: white;
+            border-radius: var(--jp-border-radius-lg);
+            box-shadow: 0 4px 24px rgba(31,42,96,0.08);
+            overflow: hidden;
+        }
+        .form-card-header {
+            background: var(--jp-gradient);
+            color: white;
+            padding: 2rem 2rem 1.5rem;
+        }
+        .form-card-header h2 { font-weight: 800; font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .form-card-header p  { opacity: 0.85; margin: 0; }
+        .form-card-body { padding: 2rem; }
+
+        /* ── Service info strip ─────────────────────────────────── */
+        .service-info-strip {
+            background: #f0f4f8;
+            border-radius: var(--jp-border-radius-sm);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .service-info-strip .icon-box {
+            width: 48px; height: 48px;
+            background: var(--jp-gradient);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; color: white; flex-shrink: 0;
+        }
+        .service-info-strip h6 { margin: 0; font-weight: 700; }
+        .service-info-strip small { color: #566380; }
+
+        /* ── Form fields ─────────────────────────────────────────── */
+        .field-group {
+            margin-bottom: 1.5rem;
+        }
+        .field-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .required-star { color: #e53e3e; }
+        .field-help { color: #566380; font-size: 0.82rem; margin-top: 0.3rem; }
+        .field-error { color: #e53e3e; font-size: 0.82rem; margin-top: 0.3rem; }
+
+        /* file input */
+        .file-hint {
+            font-size: 0.8rem;
+            color: #8a95a8;
+            margin-top: 0.3rem;
+        }
+
+        /* ── Submit button ─────────────────────────────────────── */
+        .btn-submit-order {
+            background: var(--jp-gradient);
+            border: none;
+            color: white;
+            border-radius: var(--jp-border-radius-sm);
+            padding: 0.8rem 2.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        .btn-submit-order:hover { opacity: 0.88; color: white; }
+
+        /* ── Back link ───────────────────────────────────────────── */
+        .back-link {
+            color: var(--jp-primary-medium);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .back-link:hover { color: var(--jp-primary-dark); text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+<div class="row">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────── -->
+    <div class="col-lg-2 col-md-3 d-none d-md-block sidebar">
+        <div class="sidebar-brand mb-4">Jet<span>Pay</span>24</div>
+        <nav class="d-flex flex-column gap-1">
+            <a href="{% url 'dashboard' %}" class="nav-link-custom">
+                <i class="bi bi-house-fill"></i> داشبورد
+            </a>
+            <a href="{% url 'order_list' %}" class="nav-link-custom">
+                <i class="bi bi-box-seam-fill"></i> سفارش‌های من
+            </a>
+            <a href="{% url 'service_catalog' %}" class="nav-link-custom">
+                <i class="bi bi-grid-fill"></i> کاتالوگ سرویس‌ها
+            </a>
+            <a href="{% url 'kyc_submit' %}" class="nav-link-custom">
+                <i class="bi bi-shield-check"></i> احراز هویت
+            </a>
+            <a href="{% url 'notifications_dropdown' %}" class="nav-link-custom">
+                <i class="bi bi-bell-fill"></i> اعلان‌ها
+            </a>
+        </nav>
+    </div>
+
+    <!-- ── Main content ─────────────────────────────────────────── -->
+    <div class="col-lg-10 col-md-9 py-4 px-4">
+
+        <!-- Flash messages -->
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+
+        <!-- Breadcrumb -->
+        <div class="mb-3">
+            <a href="{% url 'service_catalog' %}" class="back-link">
+                <i class="bi bi-arrow-right me-1"></i> بازگشت به کاتالوگ سرویس‌ها
+            </a>
+        </div>
+
+        <div class="form-card">
+            <!-- Header -->
+            <div class="form-card-header">
+                <h2><i class="bi bi-plus-circle me-2"></i>ثبت سفارش جدید</h2>
+                <p>فرم زیر را تکمیل کنید تا سفارش شما ثبت شود.</p>
+            </div>
+
+            <div class="form-card-body">
+
+                <!-- Service info strip -->
+                <div class="service-info-strip">
+                    <div class="icon-box">
+                        {% if service.icon %}
+                        <i class="{{ service.icon }}"></i>
+                        {% else %}
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6>{{ service.name }}</h6>
+                        <small>{{ service.category.name }}
+                            {% if service.base_price %}
+                            — {{ service.base_price|floatformat:0 }} {{ service.currency }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+
+                <!-- No fields notice -->
+                {% if not form.fields %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    این سرویس فیلد اضافی ندارد. برای ثبت سفارش روی دکمه زیر کلیک کنید.
+                </div>
+                {% endif %}
+
+                <!-- Dynamic form -->
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="field-group">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                            <span class="required-star">*</span>
+                            {% endif %}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.field_type == 'file' or field.field.widget.input_type == 'file' %}
+                        <div class="file-hint">
+                            <i class="bi bi-info-circle me-1"></i>
+                            فرمت‌های مجاز: JPG، PNG، PDF — حداکثر ۱۰ مگابایت
+                        </div>
+                        {% endif %}
+
+                        {% if field.help_text %}
+                        <div class="field-help">{{ field.help_text }}</div>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                        <div class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Non-field errors -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4 d-flex gap-3 align-items-center">
+                        <button type="submit" class="btn-submit-order">
+                            <i class="bi bi-send-fill me-2"></i>ثبت سفارش
+                        </button>
+                        <a href="{% url 'service_catalog' %}" class="back-link">انصراف</a>
+                    </div>
+                </form>
+            </div><!-- /form-card-body -->
+        </div><!-- /form-card -->
+    </div><!-- /col -->
+</div><!-- /row -->
+</div><!-- /container -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

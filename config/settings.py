@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'kyc',
     'notifications',
     'payments',
+    'services',
 ]
 
 MIDDLEWARE = [
