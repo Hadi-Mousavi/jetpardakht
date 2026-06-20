@@ -1,0 +1,86 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content %}
+
+{% if order_stats %}
+<style>
+.jp-order-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.jp-stat-card {
+    flex: 1 1 160px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(31,42,96,.06);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.jp-stat-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.jp-stat-icon.total    { background: rgba(13,110,253,.12); color: #0d6efd; }
+.jp-stat-icon.pending  { background: rgba(13,202,240,.14); color: #055160; }
+.jp-stat-icon.progress { background: rgba(13,110,253,.1);  color: #0c5460; }
+.jp-stat-icon.done     { background: rgba(25,135,84,.12);  color: #198754; }
+.jp-stat-body {}
+.jp-stat-value {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+}
+.jp-stat-label {
+    font-size: 0.78rem;
+    color: #6c757d;
+    margin-top: 0.1rem;
+}
+</style>
+
+<div class="jp-order-stats">
+    <div class="jp-stat-card">
+        <div class="jp-stat-icon total">📦</div>
+        <div class="jp-stat-body">
+            <div class="jp-stat-value">{{ order_stats.total }}</div>
+            <div class="jp-stat-label">کل سفارش‌ها</div>
+        </div>
+    </div>
+    <div class="jp-stat-card">
+        <div class="jp-stat-icon pending">🔍</div>
+        <div class="jp-stat-body">
+            <div class="jp-stat-value">{{ order_stats.pending }}</div>
+            <div class="jp-stat-label">در انتظار / بررسی</div>
+        </div>
+    </div>
+    <div class="jp-stat-card">
+        <div class="jp-stat-icon progress">🚀</div>
+        <div class="jp-stat-body">
+            <div class="jp-stat-value">{{ order_stats.in_progress }}</div>
+            <div class="jp-stat-label">در حال انجام</div>
+        </div>
+    </div>
+    <div class="jp-stat-card">
+        <div class="jp-stat-icon done">✅</div>
+        <div class="jp-stat-body">
+            <div class="jp-stat-value">{{ order_stats.completed }}</div>
+            <div class="jp-stat-label">تکمیل شده</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}
